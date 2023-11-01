@@ -1,0 +1,5 @@
+---
+- name: Install MySQL using Binary Method
+  hosts: server
+  roles:
+    - Mysql_tool

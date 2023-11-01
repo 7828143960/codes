@@ -1,0 +1,6 @@
+---
+- name: Initialize MySQL
+  service:
+    name: mysql
+    state: started
+
