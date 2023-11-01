@@ -1,0 +1,6 @@
+---
+mysql_root_password: 12345678
+#mysql_data_directory: /usr/local/mysql/data
+mysql_user: mysql
+mysql_group: mysql
+

@@ -1,0 +1,71 @@
+---
+- name: Check the OS distribution
+  include_tasks: ubuntu.yml
+  when: ansible_distribution in ['Ubuntu', 'CentOS']
+
+- name: Download MySQL server package using wget
+  command: wget -O /tmp/mysql-8.2.0-linux-glibc2.28-x86_64.tar.xz https://dev.mysql.com/get/Downloads/MySQL-8.2.0/mysql-8.2.0-linux-glibc2.28-x86_64.tar.xz
+
+- name: Extract MySQL tar archive
+  become: yes
+  unarchive:
+    src: /tmp/mysql-8.2.0-linux-glibc2.28-x86_64.tar.xz
+    dest: /usr/local
+    remote_src: yes
+
+- name: Create MySQL group
+  become: yes
+  group:
+    name: "{{ mysql_group }}"
+
+- name: Create MySQL user
+  become: yes
+  user:
+    name: "{{ mysql_user }}"
+    comment: MySQL Server
+    group: "{{ mysql_group }}"
+    shell: /bin/false
+    system: yes
+
+- name: Initialize MySQL data directory
+  command: /usr/local/mysql/bin/mysqld --initialize-insecure --user=mysql
+  become: yes
+
+- name: Change ownership of MySQL installation directory
+  file:
+    path: /usr/local/mysql
+    owner: root
+  become: yes
+
+- name: Change ownership of MySQL data directory
+  file:
+    path: /usr/local/mysql/data
+    owner: mysql
+  become: yes
+
+- name: Start MySQL service
+  command: /usr/local/mysql/bin/mysqld_safe --user=mysql 
+  become: yes
+  
+- name: Secure MySQL installation - Step 1
+  command: /usr/local/mysql/bin/mysql_secure_installation
+
+- name: Secure MySQL installation - Step 2
+  expect:
+    command: /usr/local/mysql/bin/mysql_secure_installation
+    responses:
+      - "Enter password for user root:" : "12345678"
+      - "Change the root password?" : "n"
+      - "Remove anonymous users?" : "y"
+      - "Disallow root login remotely?" : "y"
+      - "Remove test database and access to it?" : "y"
+      - "Reload privilege tables now?" : "y"
+  become: yes
+  async: 300
+  poll: 0
+ 
+- name: Access MySQL service
+  command: /usr/local/mysql/bin/mysql -u root -p
+  become: yes
+  args:
+    stdin: "12345678"
