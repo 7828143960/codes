@@ -1,0 +1,19 @@
+@Library("my-shared-library") _
+
+def genericCiSlackNotification = new org.avengers.template.genericCi.GenericCiSlackNotification()
+
+node {
+   genericCiSlackNotification.call() 
+}
+
+
+
+    
+    
+
+
+
+    
+    
+
+
