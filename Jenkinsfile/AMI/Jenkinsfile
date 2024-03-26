@@ -1,16 +1,13 @@
+@Library("my-shared-library") _
+
+def genericCiPackerAmi = new org.avengers.template.genericCi.GenericCiAmi()
+
 node {
-    // Define AWS credentials
-    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-        
-        // Change to the directory containing the Packer configuration
-        dir('/home/shreya/') {
-            // Initialize Packer (if necessary)
-            sh '/usr/bin/packer init .'
-            
-            // Build the AMI
-            sh '/usr/bin/packer build .'
-        }
-    }
+    
+    def url = 'https://github.com/CodeOps-Hub/AMI.git'
+    def creds = 'c78ea501-f75a-4296-8f25-05a43fb2b116'
+    def branch = 'main'
+    
+    genericCiPackerAmi.call(url, creds, branch)
+    
 }
-
-
