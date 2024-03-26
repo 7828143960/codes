@@ -1,0 +1,5 @@
+vpc_id              = "vpc-0c927c113819d1a70"
+key_name            = "VM-Key.pem"
+server_type         = "t2.micro"
+subnet_id           = "subnet-0617c653773732b23"
+server_name         = "standalone-Server"
