@@ -1,26 +1,16 @@
-pipeline {
-    agent any
-    
-    environment {
-        AWS_ACCESS_KEY_ID     = credentials('credentials')
-        AWS_SECRET_ACCESS_KEY = credentials('credentials')
-    }
-    
-    stages {
-        stage('Build AMI') {
-            steps {
-                script {
-                    // Change to the directory containing the Packer configuration
-                    dir('/home/shreya/') {
-                        // Initialize Packer (if necessary)
-                        sh '/usr/bin/packer init .'
-                        
-                        // Build the AMI
-                        sh '/usr/bin/packer build .'
-                    }
-                }
-            }
+node {
+    // Define AWS credentials
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+        
+        // Change to the directory containing the Packer configuration
+        dir('/home/shreya/') {
+            // Initialize Packer (if necessary)
+            sh '/usr/bin/packer init .'
+            
+            // Build the AMI
+            sh '/usr/bin/packer build .'
         }
     }
 }
+
 
