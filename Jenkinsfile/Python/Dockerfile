@@ -1,6 +1,14 @@
 # Use an official Python runtime as a parent image
 FROM python:3.8-slim
 
+# Install AWS CLI
+RUN apt-get update && \
+    apt-get install -y unzip && \
+    curl "https://d1uj6qtbmh3dt5.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    sudo ./aws/install && \
+    rm -rf awscliv2.zip
+
 # Set the working directory in the container
 WORKDIR /app
 
