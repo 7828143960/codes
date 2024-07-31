@@ -54,8 +54,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: "${env.AWS_CREDENTIALS_ID}", usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         sh """
                             aws eks update-kubeconfig --region ${env.AWS_REGION} --name my-k8s-cluster
-                            kubectl apply -f Python/deployment.yaml
-                            kubectl apply -f Python/service.yaml
+                            kubectl apply -f Jenkinsfile/Python/deployment.yaml
+                            kubectl apply -f Jenkinsfile/Python/service.yaml
                         """
                     }
                 }
