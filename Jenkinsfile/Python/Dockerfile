@@ -5,7 +5,7 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY app.py /app
+COPY Jenkinsfile/Python/app.py /app
 
 RUN pip install flask
 
