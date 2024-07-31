@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-flask
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-flask
+  template:
+    metadata:
+      labels:
+        app: hello-flask
+    spec:
+      containers:
+      - name: hello-flask
+        image: 133673781875.dkr.ecr.us-east-2.amazonaws.com/hello-flask:latest
+        ports:
+        - containerPort: 8000
+        
