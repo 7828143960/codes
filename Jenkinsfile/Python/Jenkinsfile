@@ -8,6 +8,7 @@ pipeline {
         AWS_CREDENTIALS_ID = 'vishal-aws-creds'
         GIT_CREDENTIALS_ID = 'shreya-github-id'
         GIT_REPO_URL = 'https://github.com/7828143960/shreya_private.git'
+        DOCKER_BUILDKIT = '1'
     }
 
     stages {
@@ -16,15 +17,16 @@ pipeline {
                 git branch: 'snaatak-Jenkinsfile', credentialsId: "${env.GIT_CREDENTIALS_ID}", url: "${env.GIT_REPO_URL}"
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    def appImage = docker.build("${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG}")
+                    // Specify the path to the Dockerfile
+                    def appImage = docker.build("${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG}", "-f docker/Dockerfile .")
                 }
             }
         }
-        
+
         stage('Login to ECR') {
             steps {
                 script {
@@ -36,7 +38,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Push Image to ECR') {
             steps {
                 script {
@@ -47,7 +49,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy to EKS') {
             steps {
                 script {
