@@ -7,7 +7,7 @@ pipeline {
         ECR_IMAGE_TAG = 'latest'
         AWS_CREDENTIALS_ID = 'AWS_Credentials_for_Jenkins'
         GIT_CREDENTIALS_ID = 'github-id'
-        GIT_REPO_URL = 'https://github.com/CodeOps-Hub/Terraform.git'
+        GIT_REPO_URL = 'https://github.com/7828143960/shreya_private.git'
     }
 
     stages {
