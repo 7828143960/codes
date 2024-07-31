@@ -6,7 +6,7 @@ pipeline {
         ECR_REPO_NAME = 'hello-flask'
         ECR_IMAGE_TAG = 'latest'
         AWS_CREDENTIALS_ID = 'vishal-aws-creds'
-        GIT_CREDENTIALS_ID = 'shreya-old-github-id'
+        GIT_CREDENTIALS_ID = 'shreya-github-id'
         GIT_REPO_URL = 'https://github.com/7828143960/shreya_private.git'
     }
 
