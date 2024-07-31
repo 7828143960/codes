@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Specify the path to the Dockerfile
-                    def appImage = docker.build("${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG}", "-f docker/Dockerfile .")
+                    def appImage = docker.build("${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG}", "-f Jenkinsfile/Python/Dockerfile .")
                 }
             }
         }
