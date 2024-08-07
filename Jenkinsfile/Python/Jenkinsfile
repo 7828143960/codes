@@ -21,12 +21,25 @@ pipeline {
             }
         }
 
+        stage('Terraform Init') {
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
+                        sh """
+                            cd Jenkinsfile/Terraform
+                            terraform init
+                        """
+                    }
+                }
+            }
+        }
+
         stage('Terraform Fmt') {
             steps {
                 script {
                     sh """
                         cd Jenkinsfile/Terraform
-                        terraform fmt 
+                        terraform fmt
                     """
                 }
             }
@@ -43,13 +56,12 @@ pipeline {
             }
         }
 
-        stage('Terraform Init and Plan') {
+        stage('Terraform Plan') {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
                             cd Jenkinsfile/Terraform
-                            terraform init
                             terraform plan -var aws_region=${env.AWS_REGION} -out=tfplan
                         """
                     }
@@ -80,7 +92,7 @@ pipeline {
             }
             steps {
                 script {
-                    def terraformOutputs = sh(script: 'cd Terraform && terraform output -json', returnStdout: true).trim()
+                    def terraformOutputs = sh(script: 'cd Jenkinsfile/Terraform && terraform output -json', returnStdout: true).trim()
                     def outputs = readJSON(text: terraformOutputs)
                     env.EKS_CLUSTER_NAME = outputs.eks_cluster_name.value
                     env.ECR_REPOSITORY_URL = outputs.ecr_repository_url.value
@@ -94,7 +106,7 @@ pipeline {
             }
             steps {
                 script {
-                    def appImage = docker.build("${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}", "-f Python/Dockerfile .")
+                    def appImage = docker.build("${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}", "-f Jenkinsfile/Python/Dockerfile .")
                 }
             }
         }
@@ -137,8 +149,8 @@ pipeline {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
                             aws eks --region ${env.AWS_REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
-                            kubectl apply -f Python/deployment.yaml
-                            kubectl apply -f Python/service.yaml
+                            kubectl apply -f Jenkinsfile/Python/deployment.yaml
+                            kubectl apply -f Jenkinsfile/Python/service.yaml
                         """
                     }
                 }
