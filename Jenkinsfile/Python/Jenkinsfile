@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        cd Terraform
+                        cd Jenkinsfile/Terraform
                         terraform fmt -check -diff
                     """
                 }
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        cd Terraform
+                        cd Jenkinsfile/Terraform
                         terraform validate
                     """
                 }
@@ -48,7 +48,7 @@ pipeline {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
-                            cd Terraform
+                            cd Jenkinsfile/Terraform
                             terraform init
                             terraform plan -var aws_region=${env.AWS_REGION} -out=tfplan
                         """
@@ -62,7 +62,7 @@ pipeline {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
-                            cd Terraform
+                            cd Jenkinsfile/Terraform
                             if [ "${params.ACTION}" == "apply" ]; then
                                 terraform apply -auto-approve tfplan
                             else
