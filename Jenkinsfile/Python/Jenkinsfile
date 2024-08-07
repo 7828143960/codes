@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'us-east-1'
+        AWS_REGION = 'us-east-2'
         AWS_ACCOUNT_ID = '133673781875'
         ECR_IMAGE_TAG = 'latest'
         AWS_CREDENTIALS_ID = 'vishal-aws-creds' // This should be AWS credentials type
@@ -18,6 +18,28 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'snaatak-Jenkinsfile', credentialsId: "${env.GIT_CREDENTIALS_ID}", url: "${env.GIT_REPO_URL}"
+            }
+        }
+
+        stage('Terraform Fmt') {
+            steps {
+                script {
+                    sh """
+                        cd Terraform
+                        terraform fmt -check -diff
+                    """
+                }
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                script {
+                    sh """
+                        cd Terraform
+                        terraform validate
+                    """
+                }
             }
         }
 
