@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-flask
-        image: 133673781875.dkr.ecr.us-east-2.amazonaws.com/hello-flask:latest
+        image: <ECR_REPOSITORY_URL>/hello-flask:latest
         ports:
         - containerPort: 8000
         
