@@ -70,21 +70,21 @@ pipeline {
         }
 
         stage('Terraform Apply or Destroy') {
-    steps {
-        script {
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                sh """
-                    cd Jenkinsfile/Terraform
-                    if [[ "${params.ACTION}" == "apply" ]]; then
-                        terraform apply --auto-approve 
-                    else
-                        terraform destroy --auto-approve
-                    fi
-                """
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
+                        sh """
+                            cd Jenkinsfile/Terraform
+                            if [[ "${params.ACTION}" == "apply" ]]; then
+                                terraform apply --auto-approve 
+                            else
+                                terraform destroy --auto-approve
+                            fi
+                        """
+                    }
+                }
             }
         }
-    }
-}
 
         stage('Retrieve Terraform Outputs') {
             when {
@@ -133,7 +133,6 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker tag ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                         docker push ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                     """
                 }
