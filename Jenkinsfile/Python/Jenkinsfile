@@ -5,7 +5,7 @@ pipeline {
         AWS_REGION = 'us-east-2'
         AWS_ACCOUNT_ID = '133673781875'
         ECR_IMAGE_TAG = 'latest'
-        AWS_CREDENTIALS_ID = 'vishal-aws-creds' // This should be AWS credentials type
+        AWS_CREDENTIALS_ID = 'vishal-aws-creds'
         GIT_CREDENTIALS_ID = 'shreya-github-id'
         GIT_REPO_URL = 'https://github.com/7828143960/shreya_private.git'
     }
@@ -62,34 +62,40 @@ pipeline {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
                             cd Jenkinsfile/Terraform
-                            terraform plan 
+                            terraform plan
                         """
                     }
                 }
             }
         }
 
-        stage('Approval For Apply') {
+        stage('Apply Terraform') {
             when {
                 expression { params.ACTION == 'apply' }
             }
             steps {
-                // Prompt for approval before applying changes
-                input message: 'Do you want to apply Terraform changes?', ok: 'Apply'
+                script {
+                    input message: 'Do you want to apply Terraform changes?', ok: 'Apply'
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
+                        sh """
+                            cd Jenkinsfile/Terraform
+                            terraform apply --auto-approve
+                        """
+                    }
+                }
             }
         }
 
-        stage('Terraform Apply or Destroy') {
+        stage('Destroy Terraform') {
+            when {
+                expression { params.ACTION == 'destroy' }
+            }
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
                             cd Jenkinsfile/Terraform
-                            if [ "${params.ACTION}" = "apply" ]; then
-                                terraform apply --auto-approve 
-                            else
-                                terraform destroy --auto-approve
-                            fi
+                            terraform destroy --auto-approve
                         """
                     }
                 }
@@ -104,7 +110,6 @@ pipeline {
                 script {
                     def terraformOutputs = sh(script: 'cd Jenkinsfile/Terraform && terraform output -json', returnStdout: true).trim()
                     def outputs = readJSON(text: terraformOutputs)
-                    // Check if the output keys are correct
                     env.EKS_CLUSTER_NAME = outputs?.eks_cluster_name?.value
                     env.ECR_REPOSITORY_URL = outputs?.ecr_repository_url?.value
                 }
@@ -117,7 +122,7 @@ pipeline {
             }
             steps {
                 script {
-                    def appImage = docker.build("${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}", "-f Jenkinsfile/Python/Dockerfile .")
+                    docker.build("${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}", "-f Jenkinsfile/Python/Dockerfile .")
                 }
             }
         }
