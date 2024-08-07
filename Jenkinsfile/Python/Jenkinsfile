@@ -69,13 +69,23 @@ pipeline {
             }
         }
 
+        stage('Approval For Apply') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
+            steps {
+                // Prompt for approval before applying changes
+                input message: 'Do you want to apply Terraform changes?', ok: 'Apply'
+            }
+        }
+
         stage('Terraform Apply or Destroy') {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
                             cd Jenkinsfile/Terraform
-                            if [[ "${params.ACTION}" == "apply" ]]; then
+                            if [ "${params.ACTION}" = "apply" ]; then
                                 terraform apply --auto-approve 
                             else
                                 terraform destroy --auto-approve
@@ -94,8 +104,9 @@ pipeline {
                 script {
                     def terraformOutputs = sh(script: 'cd Jenkinsfile/Terraform && terraform output -json', returnStdout: true).trim()
                     def outputs = readJSON(text: terraformOutputs)
-                    env.EKS_CLUSTER_NAME = outputs.eks_cluster_name.value
-                    env.ECR_REPOSITORY_URL = outputs.ecr_repository_url.value
+                    // Check if the output keys are correct
+                    env.EKS_CLUSTER_NAME = outputs?.eks_cluster_name?.value
+                    env.ECR_REPOSITORY_URL = outputs?.ecr_repository_url?.value
                 }
             }
         }
@@ -133,6 +144,7 @@ pipeline {
             steps {
                 script {
                     sh """
+                        docker tag ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                         docker push ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                     """
                 }
