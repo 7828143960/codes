@@ -76,9 +76,9 @@ pipeline {
                         sh """
                             cd Jenkinsfile/Terraform
                             if [ "${params.ACTION}" == "apply" ]; then
-                                terraform apply -auto-approve tfplan
+                                terraform apply --auto-approve 
                             else
-                                terraform destroy -auto-approve
+                                terraform destroy --auto-approve
                             fi
                         """
                     }
