@@ -56,6 +56,19 @@ pipeline {
             }
         }
 
+        stage('Terraform Refresh') {
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
+                        sh """
+                            cd Jenkinsfile/Terraform
+                            terraform refresh
+                        """
+                    }
+                }
+            }
+        }
+
         stage('Terraform Plan') {
             steps {
                 script {
