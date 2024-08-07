@@ -92,6 +92,7 @@ pipeline {
             }
             steps {
                 script {
+                    input message: 'Do you want to destroy Terraform resources?', ok: 'Destroy'
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
                             cd Jenkinsfile/Terraform
