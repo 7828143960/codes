@@ -5,6 +5,7 @@ pipeline {
         AWS_REGION = 'us-east-1'
         AWS_ACCOUNT_ID = '133673781875'
         ECR_IMAGE_TAG = 'latest'
+        ECR_REPOSITORY_URL = "${env.ECR_REPOSITORY_URL}"
         AWS_CREDENTIALS_ID = 'vishal-aws-creds'
         GIT_CREDENTIALS_ID = 'shreya-github-id'
         GIT_REPO_URL = 'https://github.com/7828143960/shreya_private.git'
