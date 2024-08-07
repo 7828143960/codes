@@ -4,11 +4,14 @@ pipeline {
     environment {
         AWS_REGION = 'us-east-2'
         AWS_ACCOUNT_ID = '133673781875'
-        ECR_REPO_NAME = 'hello-flask'
         ECR_IMAGE_TAG = 'latest'
         AWS_CREDENTIALS_ID = 'vishal-aws-creds' // This should be AWS credentials type
         GIT_CREDENTIALS_ID = 'shreya-github-id'
         GIT_REPO_URL = 'https://github.com/7828143960/shreya_private.git'
+    }
+
+    parameters {
+        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Choose action to apply or destroy infrastructure')
     }
 
     stages {
@@ -18,21 +21,71 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Terraform Init and Plan') {
             steps {
                 script {
-                    // Specify the path to the Dockerfile
-                    def appImage = docker.build("${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG}", "-f Jenkinsfile/Python/Dockerfile .")
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
+                        sh """
+                            cd Terraform
+                            terraform init
+                            terraform plan -var aws_region=${env.AWS_REGION} -out=tfplan
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply or Destroy') {
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
+                        sh """
+                            cd Terraform
+                            if [ "${params.ACTION}" == "apply" ]; then
+                                terraform apply -auto-approve tfplan
+                            else
+                                terraform destroy -auto-approve
+                            fi
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Retrieve Terraform Outputs') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
+            steps {
+                script {
+                    def terraformOutputs = sh(script: 'cd Terraform && terraform output -json', returnStdout: true).trim()
+                    def outputs = readJSON(text: terraformOutputs)
+                    env.EKS_CLUSTER_NAME = outputs.eks_cluster_name.value
+                    env.ECR_REPOSITORY_URL = outputs.ecr_repository_url.value
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
+            steps {
+                script {
+                    def appImage = docker.build("${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}", "-f Python/Dockerfile .")
                 }
             }
         }
 
         stage('Login to ECR') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
-                            aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com
+                            aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin ${env.ECR_REPOSITORY_URL}
                         """
                     }
                 }
@@ -40,24 +93,30 @@ pipeline {
         }
 
         stage('Push Image to ECR') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
             steps {
                 script {
                     sh """
-                        docker tag ${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com/${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG}
-                        docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com/${env.ECR_REPO_NAME}:${env.ECR_IMAGE_TAG}
+                        docker tag ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
+                        docker push ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                     """
                 }
             }
         }
 
         stage('Deploy to EKS') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
-                            aws eks update-kubeconfig --region ${env.AWS_REGION} --name my-k8s-cluster
-                            kubectl apply -f Jenkinsfile/Python/deployment.yaml
-                            kubectl apply -f Jenkinsfile/Python/service.yaml
+                            aws eks --region ${env.AWS_REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
+                            kubectl apply -f Python/deployment.yaml
+                            kubectl apply -f Python/service.yaml
                         """
                     }
                 }
