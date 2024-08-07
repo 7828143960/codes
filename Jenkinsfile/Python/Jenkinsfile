@@ -62,7 +62,7 @@ pipeline {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
                             cd Jenkinsfile/Terraform
-                            terraform plan -var aws_region=${env.AWS_REGION} -out=tfplan
+                            terraform plan 
                         """
                     }
                 }
