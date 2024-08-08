@@ -29,10 +29,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform init
-                        """
+                        '''
                     }
                 }
             }
@@ -44,10 +44,10 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
+                    sh '''
                         cd Jenkinsfile/Terraform
                         terraform fmt
-                    """
+                    '''
                 }
             }
         }
@@ -58,10 +58,10 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
+                    sh '''
                         cd Jenkinsfile/Terraform
                         terraform validate
-                    """
+                    '''
                 }
             }
         }
@@ -73,10 +73,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform plan
-                        """
+                        '''
                     }
                 }
             }
@@ -90,10 +90,10 @@ pipeline {
                 script {
                     input message: 'Do you want to apply Terraform changes?', ok: 'Apply'
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform apply --auto-approve
-                        """
+                        '''
                     }
                 }
             }
@@ -125,10 +125,10 @@ pipeline {
                 script {
                     input message: 'Do you want to destroy Terraform resources?', ok: 'Destroy'
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform destroy --auto-approve
-                        """
+                        '''
                     }
                 }
             }
@@ -155,6 +155,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        #!/bin/bash
                         docker build -t ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} -f Jenkinsfile/Python/Dockerfile .
                     '''
                 }
@@ -168,9 +169,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
-                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${env.ECR_REPOSITORY_URL}
-                        """
+                        sh '''
+                            #!/bin/bash
+                            aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin ${env.ECR_REPOSITORY_URL}
+                        '''
                     }
                 }
             }
@@ -183,6 +185,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        #!/bin/bash
                         docker tag ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                         docker push ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                     '''
@@ -197,11 +200,12 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
-                            aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}
+                        sh '''
+                            #!/bin/bash
+                            aws eks --region ${env.AWS_REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
                             kubectl apply -f Jenkinsfile/Python/deployment.yaml
                             kubectl apply -f Jenkinsfile/Python/service.yaml
-                        """
+                        '''
                     }
                 }
             }
