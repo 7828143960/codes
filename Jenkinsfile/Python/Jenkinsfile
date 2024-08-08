@@ -83,20 +83,20 @@ pipeline {
         }
 
         stage('Clean ECR Images') {
-            when {
-                expression { params.ACTION == 'destroy' }
-            }
-            steps {
-                script {
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
-                            aws ecr list-images --repository-name my-ecr-repo --region ${env.AWS_REGION} | grep 'imageId' | sed 's/[^"]*"\([^"]*\)".*/\\1/' | while read imageTag; do
-                                aws ecr batch-delete-image --repository-name my-ecr-repo --image-ids imageTag=${imageTag} --region ${env.AWS_REGION}
-                            done
-                        """
-                    }
-                }
-            }
+           when {
+               expression { params.ACTION == 'destroy' }
+           }
+           steps {
+               script {
+                   withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
+                       sh """
+                          aws ecr list-images --repository-name my-ecr-repo --region ${env.AWS_REGION} | grep -oP '(?<="imageId": "\K[^"]*)' | while read -r imageTag; do
+                              aws ecr batch-delete-image --repository-name my-ecr-repo --image-ids imageTag=${imageTag} --region ${env.AWS_REGION}
+                          done
+                       """
+                 }
+              }
+           }
         }
 
         stage('Apply Terraform') {
