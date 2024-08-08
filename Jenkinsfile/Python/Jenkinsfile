@@ -156,7 +156,7 @@ pipeline {
                 script {
                     sh '''
                         #!/bin/bash
-                        docker build -t ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} -f Jenkinsfile/Python/Dockerfile .
+                        docker build -t $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG -f Jenkinsfile/Python/Dockerfile .
                     '''
                 }
             }
@@ -171,7 +171,7 @@ pipeline {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh '''
                             #!/bin/bash
-                            aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin ${env.ECR_REPOSITORY_URL}
+                            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URL
                         '''
                     }
                 }
@@ -186,8 +186,8 @@ pipeline {
                 script {
                     sh '''
                         #!/bin/bash
-                        docker tag ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
-                        docker push ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
+                        docker tag $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG
+                        docker push $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG
                     '''
                 }
             }
@@ -202,7 +202,7 @@ pipeline {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh '''
                             #!/bin/bash
-                            aws eks --region ${env.AWS_REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
+                            aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
                             kubectl apply -f Jenkinsfile/Python/deployment.yaml
                             kubectl apply -f Jenkinsfile/Python/service.yaml
                         '''
