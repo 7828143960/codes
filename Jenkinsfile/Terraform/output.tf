@@ -10,3 +10,6 @@ output "eks_node_group_name" {
 output "ecr_repository_url" {
   value = aws_ecr_repository.my_ecr_repo.repository_url
 }
+output "eks_node_group_arn" {
+  value = aws_iam_role.eks_node_group.arn
+}
