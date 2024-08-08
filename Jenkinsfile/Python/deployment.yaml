@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-flask
-        image: ${ECR_REPOSITORY_URL}/hello-flask:latest
+        image: ${ECR_REPOSITORY_URL}:${ECR_IMAGE_TAG}
         ports:
         - containerPort: 8000
         
