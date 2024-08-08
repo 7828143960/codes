@@ -2,14 +2,13 @@
 resource "aws_eks_cluster" "my_cluster" {
   name     = "eks-cluster"
   role_arn = aws_iam_role.eks_cluster.arn
+
   vpc_config {
-    subnet_ids         = flatten([aws_subnet.my_public_subnets.*.id, aws_subnet.my_private_subnets.*.id])
-    security_group_ids = [aws_security_group.shared_sg.id]
+    subnet_ids          = flatten([aws_subnet.my_public_subnets.*.id, aws_subnet.my_private_subnets.*.id])
+    security_group_ids  = [aws_security_group.shared_sg.id]
   }
 
-  depends_on = [
-    aws_iam_policy_attachment.eks_cluster_policy_attachment_1
-  ]
+  depends_on = [aws_iam_policy_attachment.eks_cluster_policy_attachment_1]
 }
 
 # IAM Role for EKS Cluster
@@ -20,8 +19,8 @@ resource "aws_iam_role" "eks_cluster" {
     Version = "2012-10-17",
     Statement = [
       {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
+        Action    = "sts:AssumeRole",
+        Effect    = "Allow",
         Principal = {
           Service = "eks.amazonaws.com"
         }
@@ -51,19 +50,22 @@ resource "aws_iam_policy_attachment" "eks_cluster_policy_attachment_3" {
 # VPC
 resource "aws_vpc" "my_vpc" {
   cidr_block = var.networking.cidr_block
+
   tags = {
-    Name  = "eks-vpc",
+    Name  = "eks-vpc"
     Owner = "shreya"
   }
 }
 
 # Public Subnets
 resource "aws_subnet" "my_public_subnets" {
-  count                   = length(var.networking.public_subnets)
-  cidr_block              = var.networking.public_subnets[count.index]
-  vpc_id                  = aws_vpc.my_vpc.id
-  availability_zone       = var.networking.azs[count.index]
+  count = length(var.networking.public_subnets)
+
+  cidr_block            = var.networking.public_subnets[count.index]
+  vpc_id                = aws_vpc.my_vpc.id
+  availability_zone     = var.networking.azs[count.index]
   map_public_ip_on_launch = true
+
   tags = {
     Name = "public_subnet-${count.index}"
   }
@@ -71,10 +73,11 @@ resource "aws_subnet" "my_public_subnets" {
 
 # Private Subnets
 resource "aws_subnet" "my_private_subnets" {
-  count                   = length(var.networking.private_subnets)
-  vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = var.networking.private_subnets[count.index]
-  availability_zone       = var.networking.azs[count.index]
+  count = length(var.networking.private_subnets)
+
+  vpc_id                = aws_vpc.my_vpc.id
+  cidr_block            = var.networking.private_subnets[count.index]
+  availability_zone     = var.networking.azs[count.index]
   map_public_ip_on_launch = false
 
   tags = {
@@ -85,6 +88,7 @@ resource "aws_subnet" "my_private_subnets" {
 # Internet Gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.my_vpc.id
+
   tags = {
     Name = "eks-igw"
   }
@@ -93,6 +97,7 @@ resource "aws_internet_gateway" "igw" {
 # Elastic IPs
 resource "aws_eip" "elastic_ip" {
   count = var.networking.nat_gateways ? length(var.networking.private_subnets) : 0
+
   depends_on = [aws_internet_gateway.igw]
 
   tags = {
@@ -102,11 +107,13 @@ resource "aws_eip" "elastic_ip" {
 
 # NAT Gateways
 resource "aws_nat_gateway" "nats" {
-  count             = var.networking.nat_gateways ? length(var.networking.private_subnets) : 0
+  count = var.networking.nat_gateways ? length(var.networking.private_subnets) : 0
+
   subnet_id         = aws_subnet.my_public_subnets[count.index].id
   connectivity_type = "public"
   allocation_id     = aws_eip.elastic_ip[count.index].id
-  depends_on        = [aws_internet_gateway.igw]
+
+  depends_on = [aws_internet_gateway.igw]
 }
 
 # Public Route Tables
@@ -121,33 +128,34 @@ resource "aws_route" "public_routes" {
 }
 
 resource "aws_route_table_association" "public_table_association" {
-  count          = length(var.networking.public_subnets)
-  subnet_id      = aws_subnet.my_public_subnets[count.index].id
+  count      = length(var.networking.public_subnets)
+  subnet_id  = aws_subnet.my_public_subnets[count.index].id
   route_table_id = aws_route_table.public_table.id
 }
 
 # Private Route Tables
 resource "aws_route_table" "private_tables" {
-  count  = length(var.networking.private_subnets)
+  count = length(var.networking.private_subnets)
   vpc_id = aws_vpc.my_vpc.id
 }
 
 resource "aws_route" "private_routes" {
-  count                  = length(var.networking.private_subnets)
-  route_table_id         = aws_route_table.private_tables[count.index].id
+  count                 = length(var.networking.private_subnets)
+  route_table_id        = aws_route_table.private_tables[count.index].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nats[count.index].id
+  nat_gateway_id        = aws_nat_gateway.nats[count.index].id
 }
 
 resource "aws_route_table_association" "private_table_association" {
-  count          = length(var.networking.private_subnets)
-  subnet_id      = aws_subnet.my_private_subnets[count.index].id
+  count      = length(var.networking.private_subnets)
+  subnet_id  = aws_subnet.my_private_subnets[count.index].id
   route_table_id = aws_route_table.private_tables[count.index].id
 }
 
 # Security Group
 resource "aws_security_group" "shared_sg" {
   vpc_id = aws_vpc.my_vpc.id
+
   tags = {
     Name = "shared-sg"
   }
@@ -188,8 +196,7 @@ resource "aws_eks_node_group" "my_node_group" {
   depends_on = [
     aws_iam_role_policy_attachment.eks_node_group_worker_policy,
     aws_iam_role_policy_attachment.eks_node_group_ecr_policy,
-    aws_iam_role_policy_attachment.example-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.eks_node_group_ecr_push_policy
+    aws_iam_role_policy_attachment.example_AmazonEKS_CNI_Policy
   ]
 }
 
@@ -198,14 +205,16 @@ resource "aws_iam_role" "eks_node_group" {
   name = "eks-node-group-role"
 
   assume_role_policy = jsonencode({
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action    = "sts:AssumeRole",
+        Effect    = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
       }
-    }]
-    Version = "2012-10-17"
+    ]
   })
 }
 
@@ -219,34 +228,9 @@ resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-resource "aws_iam_role_policy_attachment" "example-AmazonEKS_CNI_Policy" {
+resource "aws_iam_role_policy_attachment" "example_AmazonEKS_CNI_Policy" {
+  role       = aws_iam_role.eks_node_group.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.eks_node_group.name
-}
-
-resource "aws_iam_policy" "ecr_push_policy" {
-  name        = "ECRPushPolicy"
-  description = "ECR Push Policy for EKS Node Group"
-  policy      = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "ecr:PutImage",
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload"
-        ],
-        Resource = "*"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_push_policy" {
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = aws_iam_policy.ecr_push_policy.arn
 }
 
 # ECR Repository
@@ -262,25 +246,3 @@ resource "aws_ecr_repository" "my_ecr_repo" {
     Environment = "local"
   }
 }
-
-resource "aws_ecr_repository_policy" "my_ecr_repo_policy" {
-  repository = aws_ecr_repository.my_ecr_repo.name
-  policy     = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          AWS = aws_iam_role.eks_node_group.arn
-        },
-        Action = [
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload",
-          "ecr:PutImage"
-        ]
-      }
-    ]
-  })
-}
-
