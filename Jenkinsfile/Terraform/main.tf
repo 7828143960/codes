@@ -280,4 +280,5 @@ resource "aws_ecr_repository_policy" "my_ecr_repo_policy" {
       }
     ]
   })
+  depends_on = [aws_iam_role.eks_node_group]
 }
