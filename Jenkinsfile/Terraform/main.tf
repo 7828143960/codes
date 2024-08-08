@@ -229,6 +229,11 @@ resource "aws_iam_role_policy_attachment" "example-AmazonEKS_CNI_Policy" {
   role       = aws_iam_role.eks_node_group.name
 }
 
+resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_full_access" {
+  role       = aws_iam_role.eks_node_group.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+}
+
 resource "aws_ecr_repository" "my_ecr_repo" {
   name = "my-ecr-repo"
 
