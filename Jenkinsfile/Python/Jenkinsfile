@@ -154,7 +154,9 @@ pipeline {
             }
             steps {
                 script {
-                    docker build -t ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} -f Jenkinsfile/Python/Dockerfile .")
+                    sh '''
+                        docker build -t ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} -f Jenkinsfile/Python/Dockerfile .
+                    '''
                 }
             }
         }
@@ -180,10 +182,10 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
+                    sh '''
                         docker tag ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                         docker push ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
-                    """
+                    '''
                 }
             }
         }
