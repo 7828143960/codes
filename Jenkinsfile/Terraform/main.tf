@@ -47,6 +47,39 @@ resource "aws_iam_policy_attachment" "eks_cluster_policy_attachment_3" {
   roles      = [aws_iam_role.eks_cluster.name]
 }
 
+# IAM Role for EKS Node Group
+resource "aws_iam_role" "eks_node_group" {
+  name = "eks-node-group-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action    = "sts:AssumeRole",
+        Effect    = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "eks_node_group_worker_policy" {
+  role       = aws_iam_role.eks_node_group.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_policy_attachment" "eks_node_group_ecr_policy" {
+  role       = aws_iam_role.eks_node_group.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_policy_attachment" "example_AmazonEKS_CNI_Policy" {
+  role       = aws_iam_role.eks_node_group.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
 # VPC
 resource "aws_vpc" "my_vpc" {
   cidr_block = var.networking.cidr_block
@@ -198,21 +231,6 @@ resource "aws_eks_node_group" "my_node_group" {
     aws_iam_role_policy_attachment.eks_node_group_ecr_policy,
     aws_iam_role_policy_attachment.example_AmazonEKS_CNI_Policy,
   ]
-}
-
-resource "aws_iam_role_policy_attachment" "eks_node_group_worker_policy" {
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-}
-
-resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_policy" {
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-resource "aws_iam_role_policy_attachment" "example_AmazonEKS_CNI_Policy" {
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
 # ECR Repository
