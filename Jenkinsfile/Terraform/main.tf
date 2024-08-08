@@ -263,7 +263,6 @@ resource "aws_ecr_repository" "my_ecr_repo" {
   }
 }
 
-# ECR Repository Policy
 resource "aws_ecr_repository_policy" "my_ecr_repo_policy" {
   repository = aws_ecr_repository.my_ecr_repo.name
   policy     = jsonencode({
@@ -284,3 +283,4 @@ resource "aws_ecr_repository_policy" "my_ecr_repo_policy" {
     ]
   })
 }
+
