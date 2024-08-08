@@ -262,3 +262,25 @@ resource "aws_ecr_repository" "my_ecr_repo" {
     Environment = "local"
   }
 }
+
+# ECR Repository Policy
+resource "aws_ecr_repository_policy" "my_ecr_repo_policy" {
+  repository = aws_ecr_repository.my_ecr_repo.name
+  policy     = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = aws_iam_role.eks_node_group.arn
+        },
+        Action = [
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
+        ]
+      }
+    ]
+  })
+}
