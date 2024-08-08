@@ -27,6 +27,10 @@ resource "aws_iam_role" "eks_cluster" {
       }
     ]
   })
+
+  tags = {
+    Name = "eks-cluster-role"
+  }
 }
 
 resource "aws_iam_policy_attachment" "eks_cluster_policy_attachment_1" {
@@ -63,6 +67,10 @@ resource "aws_iam_role" "eks_node_group" {
       }
     ]
   })
+
+  tags = {
+    Name = "eks-node-group-role"
+  }
 }
 
 resource "aws_iam_policy_attachment" "eks_node_group_worker_policy" {
@@ -152,6 +160,10 @@ resource "aws_nat_gateway" "nats" {
 # Public Route Tables
 resource "aws_route_table" "public_table" {
   vpc_id = aws_vpc.my_vpc.id
+
+  tags = {
+    Name = "public-route-table"
+  }
 }
 
 resource "aws_route" "public_routes" {
@@ -170,6 +182,10 @@ resource "aws_route_table_association" "public_table_association" {
 resource "aws_route_table" "private_tables" {
   count = length(var.networking.private_subnets)
   vpc_id = aws_vpc.my_vpc.id
+
+  tags = {
+    Name = "private-route-table-${count.index}"
+  }
 }
 
 resource "aws_route" "private_routes" {
@@ -227,9 +243,9 @@ resource "aws_eks_node_group" "my_node_group" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.eks_node_group_worker_policy,
-    aws_iam_role_policy_attachment.eks_node_group_ecr_policy,
-    aws_iam_role_policy_attachment.example_AmazonEKS_CNI_Policy,
+    aws_iam_policy_attachment.eks_node_group_worker_policy,
+    aws_iam_policy_attachment.eks_node_group_ecr_policy,
+    aws_iam_policy_attachment.example_AmazonEKS_CNI_Policy,
   ]
 }
 
