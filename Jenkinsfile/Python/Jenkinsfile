@@ -29,10 +29,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform init
-                        """
+                        '''
                     }
                 }
             }
@@ -44,10 +44,10 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
+                    sh '''
                         cd Jenkinsfile/Terraform
                         terraform fmt
-                    """
+                    '''
                 }
             }
         }
@@ -58,10 +58,10 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
+                    sh '''
                         cd Jenkinsfile/Terraform
                         terraform validate
-                    """
+                    '''
                 }
             }
         }
@@ -73,10 +73,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform plan
-                        """
+                        '''
                     }
                 }
             }
@@ -89,13 +89,12 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
-                            aws ecr list-images --repository-name my-ecr-repo --region ${env.AWS_REGION} | \
-                            grep -oP '(?<="imageId": "\K[^"]*)' | \
-                            while read -r imageTag; do
-                                aws ecr batch-delete-image --repository-name my-ecr-repo --image-ids imageTag=${imageTag} --region ${env.AWS_REGION}
+                        sh '''
+                            imageTags=$(aws ecr list-images --repository-name my-ecr-repo --region ${env.AWS_REGION} --query 'imageIds[*].imageTag' --output text)
+                            for tag in $imageTags; do
+                                aws ecr batch-delete-image --repository-name my-ecr-repo --image-ids imageTag=$tag --region ${env.AWS_REGION}
                             done
-                        """
+                        '''
                     }
                 }
             }
@@ -109,10 +108,10 @@ pipeline {
                 script {
                     input message: 'Do you want to apply Terraform changes?', ok: 'Apply'
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform apply --auto-approve
-                        """
+                        '''
                     }
                 }
             }
@@ -126,10 +125,10 @@ pipeline {
                 script {
                     input message: 'Do you want to destroy Terraform resources?', ok: 'Destroy'
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             cd Jenkinsfile/Terraform
                             terraform destroy --auto-approve
-                        """
+                        '''
                     }
                 }
             }
@@ -167,9 +166,9 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin ${env.ECR_REPOSITORY_URL}
-                        """
+                        '''
                     }
                 }
             }
@@ -181,10 +180,10 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
+                    sh '''
                         docker tag ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG} ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
                         docker push ${env.ECR_REPOSITORY_URL}:${env.ECR_IMAGE_TAG}
-                    """
+                    '''
                 }
             }
         }
@@ -196,11 +195,11 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh """
+                        sh '''
                             aws eks --region ${env.AWS_REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
                             kubectl apply -f Jenkinsfile/Python/deployment.yaml
                             kubectl apply -f Jenkinsfile/Python/service.yaml
-                        """
+                        '''
                     }
                 }
             }
