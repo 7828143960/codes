@@ -197,26 +197,7 @@ resource "aws_eks_node_group" "my_node_group" {
     aws_iam_role_policy_attachment.eks_node_group_worker_policy,
     aws_iam_role_policy_attachment.eks_node_group_ecr_policy,
     aws_iam_role_policy_attachment.example_AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.eks_node_group_ecr_full_access
   ]
-}
-
-# IAM Role for EKS Node Group
-resource "aws_iam_role" "eks_node_group" {
-  name = "eks-node-group-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action    = "sts:AssumeRole",
-        Effect    = "Allow",
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      }
-    ]
-  })
 }
 
 resource "aws_iam_role_policy_attachment" "eks_node_group_worker_policy" {
@@ -234,11 +215,6 @@ resource "aws_iam_role_policy_attachment" "example_AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
-resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_full_access" {
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
-}
-
 # ECR Repository
 resource "aws_ecr_repository" "my_ecr_repo" {
   name = "my-ecr-repo"
@@ -251,34 +227,4 @@ resource "aws_ecr_repository" "my_ecr_repo" {
     Name        = "my-ecr-repo"
     Environment = "local"
   }
-}
-
-# ECR Repository Policy
-resource "aws_ecr_repository_policy" "my_ecr_repo_policy" {
-  repository = aws_ecr_repository.my_ecr_repo.name
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Sid    = "AllowEKSNodesPushPull",
-        Effect  = "Allow",
-        Principal = {
-          AWS = [
-            aws_iam_role.eks_node_group.arn
-          ]
-        },
-        Action = [
-          "ecr:BatchGetImage",
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:CompleteLayerUpload",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:InitiateLayerUpload",
-          "ecr:PutImage",
-          "ecr:UploadLayerPart"
-        ]
-      }
-    ]
-  })
-  depends_on = [aws_iam_role.eks_node_group]
 }
