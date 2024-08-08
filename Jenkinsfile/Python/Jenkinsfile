@@ -5,7 +5,7 @@ pipeline {
         AWS_REGION = 'eu-north-1'
         AWS_ACCOUNT_ID = '133673781875'
         ECR_IMAGE_TAG = 'latest'
-        ECR_REPOSITORY_URL = "${env.ECR_REPOSITORY_URL}"
+        ECR_REPOSITORY_URL = ''  // Default value; will be updated in Retrieve Terraform Outputs
         AWS_CREDENTIALS_ID = 'vishal-aws-creds'
         GIT_CREDENTIALS_ID = 'shreya-github-id'
         GIT_REPO_URL = 'https://github.com/7828143960/shreya_private.git'
@@ -81,7 +81,8 @@ pipeline {
                 }
             }
         }
-         stage('Clean ECR Images') {
+
+        stage('Clean ECR Images') {
             when {
                 expression { params.ACTION == 'destroy' }
             }
@@ -89,9 +90,7 @@ pipeline {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
                         sh """
-                            aws ecr list-images --repository-name my-ecr-repo --region ${env.AWS_REGION} | jq -r '.imageIds[] | @base64' | while read -r image; do
-                                image=$(echo "${image}" | base64 --decode)
-                                imageTag=$(echo "${image}" | jq -r '.imageTag')
+                            aws ecr list-images --repository-name my-ecr-repo --region ${env.AWS_REGION} | grep 'imageId' | sed 's/[^"]*"\([^"]*\)".*/\\1/' | while read imageTag; do
                                 aws ecr batch-delete-image --repository-name my-ecr-repo --image-ids imageTag=${imageTag} --region ${env.AWS_REGION}
                             done
                         """
@@ -143,7 +142,7 @@ pipeline {
                     def terraformOutputs = sh(script: 'cd Jenkinsfile/Terraform && terraform output -json', returnStdout: true).trim()
                     def outputs = readJSON(text: terraformOutputs)
                     env.EKS_CLUSTER_NAME = outputs?.eks_cluster_name?.value
-                    env.ECR_REPOSITORY_URL = outputs?.ecr_repository_url?.value
+                    env.ECR_REPOSITORY_URL = outputs?.ecr_repository_url?.value ?: "${env.ECR_REPOSITORY_URL}"
                 }
             }
         }
