@@ -38,7 +38,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_eip" "elastic_ip" {
   count = var.networking.nat_gateways == false ? 0 : length(var.networking.private_subnets)
-  vpc   = true
+   domain = "vpc"
   depends_on = [aws_internet_gateway.igw]
 
   tags = {
@@ -219,7 +219,7 @@ resource "aws_iam_policy" "eks_node_group_ecr_custom_policy" {
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload"
         ],
-        Resource = "aws_ecr_repository.my_ecr_repo.arn"
+       Resource = "${aws_ecr_repository.my_ecr_repo.arn}"
       }
     ]
   })
