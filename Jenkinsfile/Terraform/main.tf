@@ -195,7 +195,6 @@ resource "aws_eks_node_group" "my_node_group" {
     aws_iam_role_policy_attachment.eks_node_group_worker_policy,
     aws_iam_role_policy_attachment.eks_node_group_ecr_policy,
     aws_iam_role_policy_attachment.example-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.eks_node_group_ecr_full_access
   ]
 
 }
@@ -230,11 +229,6 @@ resource "aws_iam_role_policy_attachment" "example-AmazonEKS_CNI_Policy" {
   role       = aws_iam_role.eks_node_group.name
 }
 
-resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_full_access" {
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
-}
-
 resource "aws_ecr_repository" "my_ecr_repo" {
   name = "my-ecr-repo"
 
@@ -246,25 +240,4 @@ resource "aws_ecr_repository" "my_ecr_repo" {
     Name        = "my-ecr-repo"
     Environment = "local"
   }
-}
-resource "aws_ecr_repository_policy" "my_ecr_repo_policy" {
-  repository = aws_ecr_repository.my_ecr_repo.name
-  policy     = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action    = [
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload",
-          "ecr:PutImage"
-        ],
-        Effect    = "Allow",
-        Principal = {
-          AWS = aws_iam_role.eks_node_group.arn
-        },
-        Resource  = "*"
-      }
-    ]
-  })
 }
