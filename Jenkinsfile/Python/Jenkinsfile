@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'us-east-1'
-        AWS_ACCOUNT_ID = '133673781875'
+        AWS_REGION = 'eu-north-1'
+        AWS_ACCOUNT_ID = '471112583890'
         ECR_REPOSITORY_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-ecr-repo"
         ECR_IMAGE_TAG = 'latest'
         AWS_CREDENTIALS_ID = 'vishal-aws-creds'
