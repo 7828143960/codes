@@ -202,6 +202,34 @@ resource "aws_iam_role_policy_attachment" "example-AmazonEKS_CNI_Policy" {
   role       = aws_iam_role.eks_node_group.name
 }
 
+# Custom IAM Policy for additional ECR permissions
+resource "aws_iam_policy" "eks_node_group_ecr_custom_policy" {
+  name        = "EKSNodeGroupECRCustomPolicy"
+  description = "Custom policy to allow ECR actions for EKS node group"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload"
+        ],
+        Resource = "aws_ecr_repository.my_ecr_repo.arn"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_custom_policy_attachment" {
+  role       = aws_iam_role.eks_node_group.name
+  policy_arn = aws_iam_policy.eks_node_group_ecr_custom_policy.arn
+}
+
 # EKS Node Group
 resource "aws_eks_node_group" "my_node_group" {
   cluster_name    = aws_eks_cluster.my_cluster.name
@@ -220,6 +248,7 @@ resource "aws_eks_node_group" "my_node_group" {
     aws_iam_role_policy_attachment.eks_node_group_worker_policy,
     aws_iam_role_policy_attachment.eks_node_group_ecr_policy,
     aws_iam_role_policy_attachment.example-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.eks_node_group_ecr_custom_policy_attachment,
   ]
 }
 
