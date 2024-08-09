@@ -194,7 +194,7 @@ resource "aws_iam_role_policy_attachment" "eks_node_group_worker_policy" {
 
 resource "aws_iam_role_policy_attachment" "eks_node_group_ecr_policy" {
   role       = aws_iam_role.eks_node_group.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonElasticContainerRegistryFullAccess"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "example-AmazonEKS_CNI_Policy" {
