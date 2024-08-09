@@ -217,7 +217,7 @@ resource "aws_iam_policy" "eks_node_group_ecr_custom_policy" {
           "ecr:InitiateLayerUpload",
           "ecr:PutImage",
           "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload"
+          "ecr:CompleteLayerUpload",
           "ecr:DescribeRepositories",
           "ecr:GetDownloadUrlForLayer",
           "ecr:ListImages",
