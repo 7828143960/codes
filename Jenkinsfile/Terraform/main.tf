@@ -218,6 +218,11 @@ resource "aws_iam_policy" "eks_node_group_ecr_custom_policy" {
           "ecr:PutImage",
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload"
+          "ecr:DescribeRepositories",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:ListImages",
+          "ecr:BatchDeleteImage",
+          "ecr:BatchGetImage"
         ],
        Resource = "${aws_ecr_repository.my_ecr_repo.arn}"
       }
