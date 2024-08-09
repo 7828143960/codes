@@ -106,7 +106,8 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                        sh '''#!/bin/bash
+                        sh '''
+                            #!/bin/bash
                             imageTags=$(aws ecr list-images --repository-name my-ecr-repo --region ${AWS_REGION} --query 'imageIds[*].imageTag' --output text)
                             for tag in $imageTags; do
                                 aws ecr batch-delete-image --repository-name my-ecr-repo --image-ids imageTag=$tag --region ${AWS_REGION}
@@ -185,12 +186,12 @@ pipeline {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${env.AWS_CREDENTIALS_ID}"]]) {
-                     sh '''
-                        #!/bin/bash
-                        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URL
-                        docker tag $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG
-                        docker push $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG
-                    '''
+                        sh '''
+                            #!/bin/bash
+                            docker tag $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG
+                            docker push $ECR_REPOSITORY_URL:$ECR_IMAGE_TAG
+                        '''
+                    }
                 }
             }
         }
