@@ -39,6 +39,7 @@ resource "aws_security_group" "example" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
 
 /*------------Generate SSH Key--------------*/
 resource "tls_private_key" "rsa_4096" {
