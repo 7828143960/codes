@@ -1,13 +1,28 @@
 @Library('my-shared-library') _
 
 def terraformCI = new org.template.terraform()
-properties([
-    parameters([
-        string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
-        string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Select the root directory'),
-        string(name: 'childPath', defaultValue: 'Terraform', description: 'Select the child directory'),
-    ])
-])
+pipeline {
+    agent any
+    
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
+        AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
+        TF_CLI_ARGS = '-input=false'
+    }
+    
+    stages {
+        stage('Terraform') {
+            steps {
+                script {
+
+                    properties([
+                        parameters([
+                            string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
+                            string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
+                            string(name: 'childPath', defaultValue: 'Terraform', description: 'Enter the child directory path')
+
+                        ])
+                    ])
 node {
     def url = 'https://github.com/7828143960/shreya_private.git'
     def creds = 'shreya-github-id'
