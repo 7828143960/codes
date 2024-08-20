@@ -11,7 +11,7 @@ resource "aws_instance" "example" {
   associate_public_ip_address = true               # To associate a public IP address
 
   # Optional - Add security group to allow SSH and HTTP access
-  security_groups = ["example-security-group"]
+  security_groups = aws_security_group.example.id
 }
 
 resource "aws_security_group" "example" {
