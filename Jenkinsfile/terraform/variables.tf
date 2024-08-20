@@ -20,3 +20,9 @@ variable "subnet_id" {
 variable "vpc_id" {
   description = "The VPC ID where the security group will be created"
 }
+
+variable "key_name" {
+  description = "Name of the SSH key pair"
+  type        = string
+  default     = navin-key
+}
