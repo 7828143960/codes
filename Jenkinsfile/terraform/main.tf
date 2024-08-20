@@ -1,5 +1,5 @@
 resource "aws_instance" "example" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Change to your preferred AMI ID
+  ami           = "ami-07c8c1b18ca66bb07"  # Change to your preferred AMI ID
   instance_type = "t2.micro"               # Instance type
 
   tags = {
@@ -7,7 +7,7 @@ resource "aws_instance" "example" {
   }
 
   # Ensure you have an existing VPC and subnet
-  subnet_id                   = "subnet-xxxxxxxx"  # Replace with your subnet ID
+  subnet_id                   = "subnet-0134f5449c7d97a39"  # Replace with your subnet ID
   associate_public_ip_address = true               # To associate a public IP address
 
   # Optional - Add security group to allow SSH and HTTP access
@@ -17,7 +17,7 @@ resource "aws_instance" "example" {
 resource "aws_security_group" "example" {
   name        = "example-security-group"
   description = "Allow SSH and HTTP traffic"
-  vpc_id      = "vpc-xxxxxxxx"  # Replace with your VPC ID
+  vpc_id      = "vpc-01833dda82803ed0b"  # Replace with your VPC ID
 
   ingress {
     from_port   = 22
