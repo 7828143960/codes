@@ -1,6 +1,6 @@
 resource "aws_instance" "example" {
   ami           = "ami-07c8c1b18ca66bb07"  # Change to your preferred AMI ID
-  instance_type = "t2.micro"               # Instance type
+  instance_type = "t3.micro"               # Instance type
 
   tags = {
     Name = "example-instance"
