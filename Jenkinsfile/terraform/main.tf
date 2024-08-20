@@ -40,7 +40,7 @@ resource "aws_security_group" "example" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-*------------Generate SSH Key--------------*/
+/*------------Generate SSH Key--------------*/
 resource "tls_private_key" "rsa_4096" {
   algorithm = "RSA"
   rsa_bits  = 4096
