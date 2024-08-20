@@ -5,7 +5,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
         AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
-        TF_CLI_ARGS = '-input=false'
+        // TF_CLI_ARGS = '-input=false'
     }
     stages {
         stage('Terraform') {
