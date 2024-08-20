@@ -13,14 +13,6 @@ variable "ami_id" {
   default     = "ami-07c8c1b18ca66bb07"
 }
 
-variable "subnet_id" {
-  description = "The subnet ID where the EC2 instance will be deployed"
-}
-
-variable "vpc_id" {
-  description = "The VPC ID where the security group will be created"
-}
-
 variable "key_name" {
   description = "Name of the SSH key pair"
   type        = string
