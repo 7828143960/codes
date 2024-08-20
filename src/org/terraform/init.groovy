@@ -1,4 +1,4 @@
-package src.terraform
+package org.terraform
 
 def call(String rootPath, String childPath) {
     stage('Terraform init') {
