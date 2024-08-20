@@ -1,4 +1,4 @@
-package src.terraform.template
+package org.terraform.template
 
 import src.terraform.*
 
