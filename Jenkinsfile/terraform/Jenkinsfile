@@ -1,0 +1,16 @@
+@Library('my-shared-library') _
+
+def terraformCI = new src.terraform.template.terraform()
+properties([
+    parameters([
+        string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
+        string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Select the root directory'),
+        string(name: 'childPath', defaultValue: 'Terraform', description: 'Select the child directory'),
+    ])
+])
+node {
+    def url = 'https://github.com/7828143960/shreya_private.git'
+    def creds = 'shreya-github-id'
+    terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
+     
+}
