@@ -4,11 +4,11 @@ import org.terraform.*
 
 def call(String url, String creds, String branch, String rootPath, String childPath, String ACTION){
 
-    checkout = new gitcheckout()
-    init = new tfinit()
-    validate = new tfvalidate()
-    fmt = new tffmt()
-    apply = new tfapply()
+    gitcheckout = new checkout()
+    tfinit = new init()
+    tfvalidate = new validate()
+    tffmt = new fmt()
+    tfapply = new apply()
     
     
   
