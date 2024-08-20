@@ -1,5 +1,5 @@
 
-package src.terraform
+package org.terraform
 
 def call(String rootPath, String childPath, String ACTION) {
    // stage('Approval For Destroy') {
