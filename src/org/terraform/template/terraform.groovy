@@ -1,6 +1,6 @@
 package org.terraform.template
 
-import src.terraform.*
+import org.terraform.*
 
 def call(String url, String creds, String branch, String rootPath, String childPath, String ACTION){
 
