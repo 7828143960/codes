@@ -10,7 +10,7 @@ variable "instance_type" {
 
 variable "ami_id" {
   description = "The ID of the AMI to use"
-  default     = "ami-0c55b159cbfafe1f0"
+  default     = "ami-07c8c1b18ca66bb07"
 }
 
 variable "subnet_id" {
