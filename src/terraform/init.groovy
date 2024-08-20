@@ -1,4 +1,4 @@
-package org.avengers.terraform_CICD
+package src.terraform
 
 def call(String rootPath, String childPath) {
     stage('Terraform init') {
