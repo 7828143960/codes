@@ -12,7 +12,7 @@ def call(String url, String creds, String branch, String rootPath, String childP
     
     
   
-    gitcheckout(url, creds, branch)
+    gitcheckout.call(url, creds, branch)
     tfinit.call(rootPath, childPath)
     tfvalidate.call(rootPath, childPath)
     tffmt.call(rootPath, childPath, ACTION)
