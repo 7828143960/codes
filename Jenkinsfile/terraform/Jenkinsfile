@@ -1,6 +1,6 @@
 @Library('my-shared-library') _
 
-def terraformCI = new src.terraform.template.terraform()
+def terraformCI = new org.terraform.template.terraform()
 properties([
     parameters([
         string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
