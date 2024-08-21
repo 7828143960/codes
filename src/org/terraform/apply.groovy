@@ -6,13 +6,6 @@ def call(String rootPath, String childPath) {
             sh "cd ${rootPath}/${childPath} && terraform plan"
         }
     }
-    
-        stage('Approval For Apply') {
-            script {
-                // Prompt for approval before applying changes
-                input "Do you want to apply Terraform changes?"
-            }
-        }
 
     stage('Terraform Apply') {
         script {
