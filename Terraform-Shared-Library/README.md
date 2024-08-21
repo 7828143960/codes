@@ -8,9 +8,9 @@
 
 
 ## Table of Contents
-- [What is Shared Library](#What-is-Shared-Library?)
-- [What is Terraform](#What-is-Terraform?)
-- [What is CI/CD](#What-is-CI/CD?)
+- [What is Shared Library](#What-is-Shared-Library)
+- [What is Terraform](#What-is-Terraform)
+- [What is CI/CD](#What-is-CI/CD)
 - [Terraform CI](#Terraform-CI)
 - [Terraform CD](#Terraform-CD)
 - [Pre-requisites](#Pre-requisites)
