@@ -34,7 +34,7 @@ Terraform is an open-source Infrastructure as Code (IaC) tool developed by Hashi
 
 ***
 
-## what is CI CD?
+## What is CI CD?
 **Continuous Integration (CI)** is a software development practice that automates the integration of code changes from multiple contributors into a shared software project repository. 
 Automation and Integration: CI automates the process of integrating code changes frequently into a central repository, facilitating faster merging of code changes and ensuring their correctness through automated testing.
 
