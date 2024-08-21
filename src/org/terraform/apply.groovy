@@ -1,6 +1,6 @@
 package org.terraform
 
-def call(String rootPath, String childPath, string ACTION) {
+def call(String rootPath, String childPath, String ACTION) {
     stage("Terraform Plan") {
         script {
             sh "cd ${rootPath}/${childPath} && terraform plan"
