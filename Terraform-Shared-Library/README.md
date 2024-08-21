@@ -18,8 +18,7 @@
 ***
 
 ## What is Terraform?
-A Terraform module is a collection of standard configuration files stored in a dedicated directory. Modules encapsulate groups of resources dedicated to specific tasks, reducing the amount of code needed for similar infrastructure components.
-Modules are containers for multiple resources used together in a configuration. They package and reuse resource configurations, making it easier to manage and scale infrastructure as it grows.
+Terraform is an open-source Infrastructure as Code (IaC) tool developed by HashiCorp. It allows you to define and manage infrastructure resources (such as virtual machines, networks, storage, etc.) using a high-level configuration language called HashiCorp Configuration Language (HCL) or JSON. Terraform enables you to automate the provisioning, management, and orchestration of cloud infrastructure across various cloud providers, including AWS, Azure, Google Cloud Platform, and others.
 
 ## what is CI/CD?
 **Continuous Integration (CI)** is a software development practice that automates the integration of code changes from multiple contributors into a shared software project repository. 
@@ -37,9 +36,9 @@ Automation and Integration: CI automates the process of integrating code changes
 | Feedback                | Provides feedback through pre-production environments, allowing QA and product professionals to verify changes before release.                                                            | Provides timely feedback on how changes perform in the real world by deploying them directly to production, enabling quick iteration and improvement based on user feedback.                               |
 
 
-## Terraform Module CI/CD: Automating Module Deployment
-In the context of Terraform, combining Continuous Integration/Continuous Deployment (CI/CD) practices with modules allows for the automated testing, building, and deployment of Terraform modules. 
-**CI/CD for Terraform Modules:** Integrating CI/CD practices with Terraform modules involves automating the process of uploading modules to the official Terraform registry. This automation streamlines the deployment of infrastructure configurations and ensures consistency in module publishing.
+## Terraform CI/CD: Automating Code Deployment
+In the context of Terraform, combining Continuous Integration/Continuous Deployment (CI/CD) practices allows for the automated testing, building, and deployment of Terraform codes. 
+**CI/CD for Terraform Code:** Integrating CI/CD practices with Terraform code involves automating the process of uploading modules to the official Terraform registry. This automation streamlines the deployment of infrastructure configurations and ensures consistency in code publishing.
 
 ## Terraform CI
 
