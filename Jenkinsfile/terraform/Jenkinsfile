@@ -18,7 +18,6 @@ pipeline {
                             string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path'),
                         ])
                     ])
-                node {choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform action (apply/destroy)')
                     def url = 'https://github.com/7828143960/shreya_private.git'
                     def creds = 'shreya-github-id'
                     terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
@@ -27,4 +26,4 @@ pipeline {
             }
         }
     }
-}
+
