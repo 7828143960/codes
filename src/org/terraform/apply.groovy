@@ -1,13 +1,12 @@
 package org.terraform
 
-def call(String rootPath, String childPath, String ACTION) {
+def call(String rootPath, String childPath) {
     stage("Terraform Plan") {
         script {
             sh "cd ${rootPath}/${childPath} && terraform plan"
         }
     }
     
-    if (ACTION == 'apply') {
         stage('Approval For Apply') {
             script {
                 // Prompt for approval before applying changes
@@ -21,8 +20,4 @@ def call(String rootPath, String childPath, String ACTION) {
             sh 'cd ${rootPath}/${childPath} && terraform apply -auto-approve'
         }
     }
-} else {
-        echo "Skipping Terraform apply since action is not set to 'apply'"
-    }
-}
-
+} 
