@@ -21,5 +21,8 @@ def call(String rootPath, String childPath, string ACTION) {
             sh 'cd ${rootPath}/${childPath} && terraform apply -auto-approve'
         }
     }
-} 
+} else {
+        echo "Skipping Terraform apply since action is not set to 'apply'"
+    }
+}
 
