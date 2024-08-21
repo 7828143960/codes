@@ -2,7 +2,7 @@
 
 |   Author        |  Created on   |  Version   | Last updated by  | Last edited on |
 | --------------- | --------------| -----------|----------------- | -------------- |
-| Shreya jaiswal  | 21 August 2024 |  Version 1 | Shreya Jaiswal  | 21 August 2024  |
+| **Shreya jaiswal**  | **21 August 2024** |  **Version 1** | **Shreya Jaiswal**  | **21 August 2024**  |
 
 <img width="894" alt="image" src="https://github.com/user-attachments/assets/73b5cc7b-6d97-4400-ac04-e93d63e0b8ce">
 
@@ -42,10 +42,10 @@ Automation and Integration: CI automates the process of integrating code changes
 
 | Aspect                  | Continuous Delivery (CD)                                                                                                                                                                  | Continuous Deployment (CD)                                                                                                                              |
 |-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Definition              | An extension of continuous integration. It automates the release of validated code to a repository following the automation of builds and unit and integration tests.                       | A logical continuation of the practice of automating build and test steps. If a build passes all previous stages in the pipeline successfully, it is automatically released to production.                  |
-| Goal                    | Helps teams release software faster, shorten the feedback loop, and automate repetitive tasks.                                                                                             | Shortens the feedback loop from code change to use in production, providing timely insight into how changes perform in the real world without compromising quality.                                         |
-| Automation              | Automates the release of validated code following successful builds and tests.                                                                                                             | Automates the release of code to production as soon as all tests have passed, eliminating manual intervention in the deployment process.                                                                              |
-| Usage                   | Suitable for scenarios where a manual approval step is needed before deploying changes to production.                                                                                      | Suitable for scenarios where rapid deployment of changes to production is desired and where automated testing ensures the quality of changes before release.                                                   |
+| **Definition**              | An extension of continuous integration. It automates the release of validated code to a repository following the automation of builds and unit and integration tests.                       | A logical continuation of the practice of automating build and test steps. If a build passes all previous stages in the pipeline successfully, it is automatically released to production.                  |
+| **Goal**                    | Helps teams release software faster, shorten the feedback loop, and automate repetitive tasks.                                                                                             | Shortens the feedback loop from code change to use in production, providing timely insight into how changes perform in the real world without compromising quality.                                         |
+| **Automation**              | Automates the release of validated code following successful builds and tests.                                                                                                             | Automates the release of code to production as soon as all tests have passed, eliminating manual intervention in the deployment process.                                                                              |
+| **Usage**                   | Suitable for scenarios where a manual approval step is needed before deploying changes to production.                                                                                      | Suitable for scenarios where rapid deployment of changes to production is desired and where automated testing ensures the quality of changes before release.                                                   |
 
 
 ***
@@ -58,10 +58,10 @@ In the context of Terraform, combining Continuous Integration/Continuous Deploym
 
 For Terraform CI, I am utilizing a comprehensive set of tools to ensure code quality, consistency, and security throughout the development process. These tools include:
 
-| Tool             | Purpose                                                                                                                                                                  |
+| Aspect             | Purpose                                                                                                                                                                  |
 |------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Terraform fmt    | Automatically formats Terraform configuration files (.tf files) to ensure consistent styling and layout.                                                                   |
-| Terraform validate | Verifies whether the configuration files are syntactically correct and internally consistent. It checks for errors in attribute names, argument types, and required inputs. |
+| **Terraform fmt**    | Automatically formats Terraform configuration files (.tf files) to ensure consistent styling and layout.                                                                   |
+| **Terraform validate** | Verifies whether the configuration files are syntactically correct and internally consistent. It checks for errors in attribute names, argument types, and required inputs. |
 
 ***
 
@@ -71,8 +71,8 @@ For Terraform CD, I'm employing a streamlined approach to deployment using the t
 
 | Aspect           | Terraform CD                                                                                                                                              |
 |------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| terraform plan   | Generates an execution plan outlining the changes Terraform will apply to the infrastructure, including new resources, updated attributes, and deletions. |
-| terraform apply  | Executes the planned changes in the Terraform configuration files, applying them to the target environment and automating the deployment process.        |
+| **terraform plan**   | Generates an execution plan outlining the changes Terraform will apply to the infrastructure, including new resources, updated attributes, and deletions. |
+| **terraform apply**  | Executes the planned changes in the Terraform configuration files, applying them to the target environment and automating the deployment process.        |
 
 ***
 
