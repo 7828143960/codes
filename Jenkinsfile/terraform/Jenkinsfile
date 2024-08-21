@@ -15,9 +15,10 @@ pipeline {
                         parameters([
                             string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
                             string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
-                            string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path'),
+                            string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
                         ])
                     ])
+                node {
                     def url = 'https://github.com/7828143960/shreya_private.git'
                     def creds = 'shreya-github-id'
                     terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
@@ -26,4 +27,4 @@ pipeline {
             }
         }
     }
-
+}
