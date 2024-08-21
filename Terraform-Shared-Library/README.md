@@ -243,6 +243,8 @@ def call(String url, String creds, String branch, String rootPath, String childP
 ```
 </details>
 
+***
+
 **src files**
 
 <details>
@@ -337,6 +339,8 @@ def call(String rootPath, String childPath) {
 ```
 </details>
 
+***
+
 **Shared Library Jenkinsfile**
 
 <details>
@@ -387,9 +391,13 @@ pipeline {
 
 ![Screenshot 2024-08-21 141545](https://github.com/user-attachments/assets/49e1f46d-c4e2-4d32-bd02-77597b94662b)
 
+***
+
 **Pipeline With SCM**
 
 ![Screenshot 2024-08-21 141605](https://github.com/user-attachments/assets/495371a1-2e10-49a4-b0cb-1e5dc8c2b622)
+
+***
 
 **Jenkinsfile Path**
 
@@ -403,13 +411,15 @@ pipeline {
 
  ![Screenshot 2024-08-21 134814](https://github.com/user-attachments/assets/0fe37403-e598-4398-96f1-361a9a515737)
 
+***
 
  **Pipeline Console Output**
 
 ![Screenshot 2024-08-21 134727](https://github.com/user-attachments/assets/5b26ea29-b8e5-4db8-8e6f-cf9f29fd9655)
 
+***
 
- **AWS Console Output**
+**AWS Console Output**
 
 ![Screenshot 2024-08-21 135114](https://github.com/user-attachments/assets/645b60b2-58fd-4a37-9e7e-d2a3230f736a)
 
@@ -437,7 +447,7 @@ In conclusion, implementing robust CI/CD checks on Terraform is crucial for guar
 
 | Description                                   | References  
 | --------------------------------------------  | -------------------------------------------------|
-| Terraform Module | https://spacelift.io/blog/what-are-terraform-modules-and-how-do-they-work |
+| Shared Library | (https://www.jenkins.io/doc/book/pipeline/shared-libraries/) |
 | What is CI | https://www.atlassian.com/continuous-delivery/continuous-integration |
 | What is CD | https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment |
 | Terraform Module CI/CD | https://www.reddit.com/r/Terraform/comments/17ldr9i/cicd_for_creating_terraform_modules/ |
