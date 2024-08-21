@@ -429,11 +429,11 @@ pipeline {
 
 | Best Practice                                              | Description                                                                                                                                              |
 |------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Input and Output Variables                                | Use input variables to parameterize codes and output variables to expose relevant information for customization based on different use cases.         |
-| Documentation                                             | Provide comprehensive documentation, including usage examples, input variable descriptions, and output variable details, to promote module adoption.    |
-| Versioning                                                | Manage Terraform using version control (e.g., Git) and version them appropriately with tools like version tags, following semantic versioning.   |
-| Formatting                                                | Integrate formatting (e.g., terraform fmt) into the development workflow to enforce code style conventions and detect errors. |
-| Continuous Integration/Continuous Deployment (CI/CD)      | Incorporate CI/CD pipelines to automate testing, validation, and deployment, ensuring thorough testing and controlled deployment of code changes.        |
+| **Input and Output Variables**                                | Use input variables to parameterize codes and output variables to expose relevant information for customization based on different use cases.         |
+| **Documentation**                                             | Provide comprehensive documentation, including usage examples, input variable descriptions, and output variable details, to promote module adoption.    |
+| **Versioning**                                                | Manage Terraform using version control (e.g., Git) and version them appropriately with tools like version tags, following semantic versioning.   |
+| **Formatting**                                                | Integrate formatting (e.g., terraform fmt) into the development workflow to enforce code style conventions and detect errors. |
+| **Continuous Integration/Continuous Deployment (CI/CD)**      | Incorporate CI/CD pipelines to automate testing, validation, and deployment, ensuring thorough testing and controlled deployment of code changes.        |
 
 ## Conclusion
 In conclusion, implementing robust CI/CD checks on Terraform is crucial for guaranteeing the reliability, security, and efficiency of your infrastructure as code (IaC). By following best practices and leveraging automation tools like Jenkins or Terraform Cloud, organizations can streamline development and deployment processes, demonstrably reducing deployment failures  and minimizing downtime.
@@ -441,13 +441,12 @@ In conclusion, implementing robust CI/CD checks on Terraform is crucial for guar
 ## Contact Information
 | Name            | Email Address                        |
 |-----------------|--------------------------------------|
-| Shreya Jaiswal | shreya.jaiswal@mygurukulam.co |
+| **Shreya Jaiswal** | shreya.jaiswal@mygurukulam.co |
 
 ## References
 
 | Description                                   | References  
 | --------------------------------------------  | -------------------------------------------------|
-| Shared Library | https://www.jenkins.io/doc/book/pipeline/shared-libraries/ |
-| What is CI | https://www.atlassian.com/continuous-delivery/continuous-integration |
-| What is CD | https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment |
-| Terraform Module CI/CD | https://www.reddit.com/r/Terraform/comments/17ldr9i/cicd_for_creating_terraform_modules/ |
+| **Shared Library** | https://www.jenkins.io/doc/book/pipeline/shared-libraries/ |
+| **What is CI** | https://www.atlassian.com/continuous-delivery/continuous-integration |
+| **What is CD** | https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment |
