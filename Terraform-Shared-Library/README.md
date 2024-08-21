@@ -1,20 +1,32 @@
-# Documentation of Terraform Module CI/CD
+# Documentation of Terraform CI/CD Using Shared Library
 
 |   Author        |  Created on   |  Version   | Last updated by  | Last edited on |
 | --------------- | --------------| -----------|----------------- | -------------- |
-| Shreya jaiswal  | 21 August 2024 |  Version 1 | Shreya Jaiswal  | 07 March 2024  |
+| Shreya jaiswal  | 21 August 2024 |  Version 1 | Shreya Jaiswal  | 21 August 2024  |
 
-![image](https://github.com/avengers-p7/Documentation/assets/156056460/44f80ab7-909e-48c2-8b1e-ea004054137e)
+<img width="894" alt="image" src="https://github.com/user-attachments/assets/73b5cc7b-6d97-4400-ac04-e93d63e0b8ce">
+
 
 ## Table of Contents
+- [What is Shared Library?](#What-is-Shared-Library?)
 - [What is Terraform?](#What-is-Terraform?)
 - [what is CI/CD?](#what-is-CI/CD?)
 - [Terraform CI](#Terraform-CI)
 - [Terraform CD](#Terraform-CD)
+- [Pre-requisites](#Pre-requisites)
+- [Terraform Code](#Terraform-Code)
+- [Shared Library Code](#Shared-Library-Code)
+- [Implementation](#Implementation)
+- [Output](#Output)
 - [Terraform best-practices when working with modules](#Terraform-best-practices-when-working-with-modules)
 - [Conclusion](#Conclusion)
 - [Contact Information](#Contact-Information)
 - [References](#References)
+***
+
+## What is Shared Library?
+A Shared Library in the context of Jenkins (and specifically with Jenkins Pipelines) is a way to share and reuse code across multiple Jenkins pipelines. Shared Libraries are used to encapsulate common pipeline code or functions that can be used by different Jenkins jobs, reducing duplication and promoting consistency across your CI/CD processes.
+
 ***
 
 ## What is Terraform?
@@ -33,8 +45,9 @@ Automation and Integration: CI automates the process of integrating code changes
 | Goal                    | Helps teams release software faster, shorten the feedback loop, and automate repetitive tasks.                                                                                             | Shortens the feedback loop from code change to use in production, providing timely insight into how changes perform in the real world without compromising quality.                                         |
 | Automation              | Automates the release of validated code following successful builds and tests.                                                                                                             | Automates the release of code to production as soon as all tests have passed, eliminating manual intervention in the deployment process.                                                                              |
 | Usage                   | Suitable for scenarios where a manual approval step is needed before deploying changes to production.                                                                                      | Suitable for scenarios where rapid deployment of changes to production is desired and where automated testing ensures the quality of changes before release.                                                   |
-| Feedback                | Provides feedback through pre-production environments, allowing QA and product professionals to verify changes before release.                                                            | Provides timely feedback on how changes perform in the real world by deploying them directly to production, enabling quick iteration and improvement based on user feedback.                               |
 
+
+***
 
 ## Terraform CI/CD: Automating Code Deployment
 In the context of Terraform, combining Continuous Integration/Continuous Deployment (CI/CD) practices allows for the automated testing, building, and deployment of Terraform codes. 
@@ -49,6 +62,7 @@ For Terraform CI, I am utilizing a comprehensive set of tools to ensure code qua
 | Terraform fmt    | Automatically formats Terraform configuration files (.tf files) to ensure consistent styling and layout.                                                                   |
 | Terraform validate | Verifies whether the configuration files are syntactically correct and internally consistent. It checks for errors in attribute names, argument types, and required inputs. |
 
+***
 
 ## Terraform CD
 
@@ -59,8 +73,348 @@ For Terraform CD, I'm employing a streamlined approach to deployment using the t
 | terraform plan   | Generates an execution plan outlining the changes Terraform will apply to the infrastructure, including new resources, updated attributes, and deletions. |
 | terraform apply  | Executes the planned changes in the Terraform configuration files, applying them to the target environment and automating the deployment process.        |
 
+***
 
-## Terraform best-practices when working with modules
+## Pre-requisites
+
+| **Pre-requisite** |
+| ---------------- |
+| **Jenkins**   |
+| **Terraform** |
+| **AWS CLI** |  
+| **Blue Ocean Plugin** | 
+| **AWS Credentials Plugin** | 
+| **Pipeline Stage View Plugin** |  
+| **Default Plugins** | 
+
+***
+
+## Terraform Code
+
+<details>
+<summary>terraform files</summary>
+<br>
+
+```shell
+resource "aws_instance" "example" {
+  ami           = "ami-07c8c1b18ca66bb07"  # Change to your preferred AMI ID
+  instance_type = "t3.micro"               # Instance type
+
+  tags = {
+    Name = "example-instance"
+  }
+
+  # Ensure you have an existing VPC and subnet
+  subnet_id                   = "subnet-0134f5449c7d97a39"  # Replace with your subnet ID
+  associate_public_ip_address = true               # To associate a public IP address
+
+  # Optional - Add security group to allow SSH and HTTP access
+  security_groups = [aws_security_group.example.id]
+}
+
+resource "aws_security_group" "example" {
+  name        = "example-security-group"
+  description = "Allow SSH and HTTP traffic"
+  vpc_id      = "vpc-01833dda82803ed0b"  # Replace with your VPC ID
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+/*------------Generate SSH Key--------------*/
+resource "tls_private_key" "rsa_4096" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+ }
+/*----------Create PEM Key----------------------*/
+resource "aws_key_pair" "key_pair" {
+  key_name   = var.key_name
+  public_key = tls_private_key.rsa_4096.public_key_openssh
+ }
+/*----------Download PEM Key-------------------*/
+resource "local_file" "private_key" {
+  content  = tls_private_key.rsa_4096.private_key_pem
+  filename = var.key_name
+ }
+```
+output.tf
+
+```shell
+output "instance_public_ip" {
+  description = "The public IP of the EC2 instance"
+  value       = aws_instance.example.public_ip
+}
+
+output "instance_id" {
+  description = "The ID of the EC2 instance"
+  value       = aws_instance.example.id
+}
+
+```
+
+variables.tf
+
+```shell
+
+variable "region" {
+  description = "The AWS region to deploy resources in"
+  default     = "eu-north-1"
+}
+
+variable "instance_type" {
+  description = "The EC2 instance type"
+  default     = "t2.micro"
+}
+
+variable "ami_id" {
+  description = "The ID of the AMI to use"
+  default     = "ami-07c8c1b18ca66bb07"
+}
+
+variable "key_name" {
+  description = "Name of the SSH key pair"
+  type        = string
+  default     = "navin-key"
+}
+
+```
+
+provider.tf
+
+```shell
+provider "aws" {
+  region = "eu-north-1"  # Change to your preferred region
+}
+```
+</details>
+
+***
+
+## Shared Library Code
+
+**terraform.groovy**
+
+<details>
+<summary> terraform.groovy </summary>
+<br>
+
+```shell
+package org.template
+
+import org.terraform.*
+
+def call(String url, String creds, String branch, String rootPath, String childPath){
+
+    gitcheckout = new checkout()
+    tfinit = new init()
+    tfvalidate = new validate()
+    tffmt = new fmt()
+    tfapply = new apply()
+    
+    
+  
+    gitcheckout.call(url, creds, branch)
+    tfinit.call(rootPath, childPath)
+    tfvalidate.call(rootPath, childPath)
+    tffmt.call(rootPath, childPath)
+    tfapply.call(rootPath, childPath)
+    
+}
+
+```
+</details>
+
+**src files**
+
+<details>
+<summary>scr files</summary>
+<br>
+checkout.grovvy
+
+```shell
+package org.terraform
+
+def call(String url, String creds, String branch) {
+    stage('Clone') {
+        script {
+            git branch: "${branch}", credentialsId: "${creds}", url: "${url}"
+        }
+    }
+}
+```
+init.groovy
+
+```shell
+package org.terraform
+
+def call(String rootPath, String childPath) {
+    stage('Terraform init') {
+        script {
+            sh "cd ${rootPath}/${childPath} && terraform init"
+        }
+    }
+}
+
+```
+
+validate.groovy
+
+```shell
+
+package org.terraform
+
+def call(String rootPath, String childPath) {
+    stage('Terraform Validate') {
+        script {
+            sh "cd ${rootPath}/${childPath} && terraform validate"
+        }
+    }
+}
+
+```
+
+fmt.groovy
+
+```shell
+package org.terraform
+
+def call(String rootPath, String childPath) {
+    stage('Terraform fmt') {
+        script {
+            sh "cd ${rootPath}/${childPath} && terraform fmt"
+        }
+    }
+}
+
+```
+
+apply.groovy
+
+```shell
+package org.terraform
+
+def call(String rootPath, String childPath) {
+    stage("Terraform Plan") {
+        script {
+            sh "cd ${rootPath}/${childPath} && terraform plan"
+        }
+    }
+
+    stage('Approval For Apply') {
+        script {
+            // Prompt for approval before applying changes
+            input "Do you want to apply Terraform changes?"
+        }
+    }
+
+    stage('Terraform Apply') {
+        script {
+            // Run Terraform apply
+            sh "cd ${rootPath}/${childPath} && terraform apply -auto-approve"
+        }
+    }
+}
+
+```
+</details>
+
+**Shared Library Jenkinsfile**
+
+<details>
+<summary>Jenkinsfile</summary>
+<br>
+
+```shell
+@Library('my-shared-library') _
+def terraformCI = new org.template.terraform()
+pipeline {
+    agent any
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
+        AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
+        // TF_CLI_ARGS = '-input=false'
+    }
+    stages {
+        stage('Terraform') {
+            steps {
+                script {
+                    properties([
+                        parameters([
+                            string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
+                            string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
+                            string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
+                        ])
+                    ])
+                node {
+                    def url = 'https://github.com/7828143960/shreya_private.git'
+                    def creds = 'shreya-github-id'
+                    terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
+                     }
+                }
+            }
+        }
+    }
+}
+
+```
+
+</details>
+
+***
+
+## Implementation
+
+**Pipeline Job**
+
+![Screenshot 2024-08-21 141545](https://github.com/user-attachments/assets/49e1f46d-c4e2-4d32-bd02-77597b94662b)
+
+**Pipeline With SCM**
+
+![Screenshot 2024-08-21 141605](https://github.com/user-attachments/assets/495371a1-2e10-49a4-b0cb-1e5dc8c2b622)
+
+**Jenkinsfile Path**
+
+![Screenshot 2024-08-21 141620](https://github.com/user-attachments/assets/5b1120e5-fa87-40d7-8734-9e4f1dd144e3)
+
+***
+
+## Output
+
+ **Pipeline Stage View**
+
+ ![Screenshot 2024-08-21 134814](https://github.com/user-attachments/assets/0fe37403-e598-4398-96f1-361a9a515737)
+
+
+ **Pipeline Console Output**
+
+![Screenshot 2024-08-21 134727](https://github.com/user-attachments/assets/5b26ea29-b8e5-4db8-8e6f-cf9f29fd9655)
+
+
+ **AWS Console Output**
+
+![Screenshot 2024-08-21 135114](https://github.com/user-attachments/assets/645b60b2-58fd-4a37-9e7e-d2a3230f736a)
+
+***
+
+## Terraform best-practices when working with terraform
 
 | Best Practice                                              | Description                                                                                                                                              |
 |------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
