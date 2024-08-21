@@ -2,7 +2,7 @@ package org.template
 
 import org.terraform.*
 
-def call(String url, String creds, String branch, String rootPath, String childPath, String ACTION){
+def call(String url, String creds, String branch, String rootPath, String childPath){
 
     gitcheckout = new checkout()
     tfinit = new init()
@@ -16,6 +16,6 @@ def call(String url, String creds, String branch, String rootPath, String childP
     tfinit.call(rootPath, childPath)
     tfvalidate.call(rootPath, childPath)
     tffmt.call(rootPath, childPath)
-    tfapply.call(rootPath, childPath, ACTION)
+    tfapply.call(rootPath, childPath)
     
 }
