@@ -15,7 +15,8 @@ pipeline {
                         parameters([
                             string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
                             string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
-                            string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
+                            string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path'),
+                            string(name: 'ACTION', defaultValue: 'plan', description: 'Enter the Terraform action (plan/apply/destroy)')
                         ])
                     ])
                 node {
