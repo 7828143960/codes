@@ -18,7 +18,7 @@
 - [Shared Library Code](#Shared-Library-Code)
 - [Implementation](#Implementation)
 - [Output](#Output)
-- [Terraform best-practices when working with modules](#Terraform-best-practices-when-working-with-modules)
+- [Terraform best-practices when working with terraform](#Terraform-best-practices-when-working-with-terraform)
 - [Conclusion](#Conclusion)
 - [Contact Information](#Contact-Information)
 - [References](#References)
