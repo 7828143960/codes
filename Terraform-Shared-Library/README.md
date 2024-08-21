@@ -8,9 +8,9 @@
 
 
 ## Table of Contents
-- [What is Shared Library?](#What-is-Shared-Library?)
-- [What is Terraform?](#What-is-Terraform?)
-- [What is CI/CD?](#What-is-CI/CD?)
+- [What is Shared Library](#What-is-Shared-Library?)
+- [What is Terraform](#What-is-Terraform?)
+- [What is CI/CD](#What-is-CI/CD?)
 - [Terraform CI](#Terraform-CI)
 - [Terraform CD](#Terraform-CD)
 - [Pre-requisites](#Pre-requisites)
@@ -31,6 +31,8 @@ A Shared Library in the context of Jenkins (and specifically with Jenkins Pipeli
 
 ## What is Terraform?
 Terraform is an open-source Infrastructure as Code (IaC) tool developed by HashiCorp. It allows you to define and manage infrastructure resources (such as virtual machines, networks, storage, etc.) using a high-level configuration language called HashiCorp Configuration Language (HCL) or JSON. Terraform enables you to automate the provisioning, management, and orchestration of cloud infrastructure across various cloud providers, including AWS, Azure, Google Cloud Platform, and others.
+
+***
 
 ## what is CI/CD?
 **Continuous Integration (CI)** is a software development practice that automates the integration of code changes from multiple contributors into a shared software project repository. 
