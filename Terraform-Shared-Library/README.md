@@ -447,7 +447,7 @@ In conclusion, implementing robust CI/CD checks on Terraform is crucial for guar
 
 | Description                                   | References  
 | --------------------------------------------  | -------------------------------------------------|
-| Shared Library | (https://www.jenkins.io/doc/book/pipeline/shared-libraries/) |
+| Shared Library | https://www.jenkins.io/doc/book/pipeline/shared-libraries/ |
 | What is CI | https://www.atlassian.com/continuous-delivery/continuous-integration |
 | What is CD | https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment |
 | Terraform Module CI/CD | https://www.reddit.com/r/Terraform/comments/17ldr9i/cicd_for_creating_terraform_modules/ |
