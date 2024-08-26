@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cp /etc/openvpn/client.conf ./${1}.ovpn
 	echo " " >> ./${1}.ovpn
 	echo "<ca>" >> ./${1}.ovpn
