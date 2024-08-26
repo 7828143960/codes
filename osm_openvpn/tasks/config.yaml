@@ -1,13 +1,11 @@
 ---
 - name: Copy the sample template of server configuration
   template:
-  args:
     src: server.conf.j2
     dest: /{{ base_directory }}/server.conf
 
 - name: Copy the sample template of client configuration
   template:
-  args:
     src: client.conf.j2
     dest: /{{ base_directory }}/client.conf
 
