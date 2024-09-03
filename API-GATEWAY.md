@@ -27,7 +27,7 @@
 
 # Introduction
 
-A Terraform module is a container for organizing and reusing Terraform code to manage related resources. It encapsulates a set of resources and configurations into a single unit that can be easily shared, reused, and versioned. Modules promote code reusability, maintainability, and scalability in Terraform projects.
+An API Gateway Terraform module is a reusable and configurable infrastructure-as-code solution for deploying and managing API Gateway resources in a cloud environment. It simplifies the creation and management of RESTful APIs, integrating seamlessly with backend services while providing essential features like request validation, throttling, and security. 
 
 ***
 
