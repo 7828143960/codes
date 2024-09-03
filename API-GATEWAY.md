@@ -57,7 +57,9 @@ An API Gateway Terraform module is a reusable and configurable infrastructure-as
 
 ***
 
-# Configuration Files
+# Configuration Files 
+
+## modules/api-gateway/main.tf
 
 ### main.tf file
 
@@ -174,6 +176,8 @@ resource "aws_apigatewayv2_api_mapping" "this" {
 
 ***
 
+## modules/api-gateway/variables.tf
+
 ### variables.tf file
 
 <details>
@@ -267,6 +271,8 @@ variable "integration_response_templates" {
 
 ***
 
+## modules/api-gateway/provider.tf
+
 ### provider.tf file
 
 <details>
@@ -275,7 +281,7 @@ variable "integration_response_templates" {
 
 ```shell
 provider "aws" {
-  region = "ap-south-1"  # Change to your preferred region
+  region = "ap-south-1"  
 }
 
 ```
@@ -283,32 +289,347 @@ provider "aws" {
 
 ***
 
-### data.tf file
+## api-gateway/backend.tf
+
+### backend.tf file
 
 <details>
 <summary> Click here to see data.tf file</summary>
 <br>
 
 ```shell
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+terraform {
+  backend "s3" {
+    bucket         = "broking-staging-tf-state"
+    key            = "broking-staging/backend/backend-api-gateway/api-gateway.tfstate"
+    region         = "ap-south-1"
+    dynamodb_table = "terraform-state-locking"
+    encrypt        = true
   }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
 }
 
 ```
 </details>
+***
 
+## api-gateway/custom_domain.tf
+
+### custom_domain.tf file
+
+<details>
+<summary> Click here to see custom_domain.tf file</summary>
+<br>
+
+```shell
+resource "aws_apigatewayv2_domain_name" "custom_domain" {
+  domain_name = var.nse_callback_api.domain_name
+  domain_name_configuration {
+    certificate_arn = var.nse_callback_api.acm_certificate_arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"  # Required attribute specifying the TLS version
+  }
+}
+
+```
+</details>
+***
+
+## api-gateway/iam.tf
+
+### iam.tf file
+
+<details>
+<summary> Click here to see iam.tf file</summary>
+<br>
+
+```shell
+resource "aws_iam_role" "sns_to_sqs_role" {
+  name = "sns-to-sqs-role"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "apigateway.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "sns_publish_and_sqs_send_policy" {
+  name        = "sns-publish-and-sqs-send-policy"
+  description = "Policy to allow SNS publish and SQS send actions"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "VisualEditor0",
+        "Effect": "Allow",
+        "Action": [
+          "sns:DeleteTopic",
+          "sns:ListTopics",
+          "sns:Unsubscribe",
+          "sns:CreatePlatformEndpoint",
+          "sns:OptInPhoneNumber",
+          "sns:CheckIfPhoneNumberIsOptedOut",
+          "sns:GetDataProtectionPolicy",
+          "sns:ListEndpointsByPlatformApplication",
+          "sns:SetEndpointAttributes",
+          "sns:Publish",
+          "sns:DeletePlatformApplication",
+          "sns:SetPlatformApplicationAttributes",
+          "sns:VerifySMSSandboxPhoneNumber",
+          "sns:Subscribe",
+          "sns:ConfirmSubscription",
+          "sns:*",
+          "sns:ListTagsForResource",
+          "sns:DeleteSMSSandboxPhoneNumber",
+          "sns:PutDataProtectionPolicy",
+          "sns:ListSubscriptionsByTopic",
+          "sns:GetTopicAttributes",
+          "sns:ListSMSSandboxPhoneNumbers",
+          "sns:CreatePlatformApplication",
+          "sns:SetSMSAttributes",
+          "sns:CreateTopic",
+          "sns:GetPlatformApplicationAttributes",
+          "sns:GetSubscriptionAttributes",
+          "sns:ListSubscriptions",
+          "sns:ListOriginationNumbers",
+          "sns:DeleteEndpoint",
+          "sns:ListPhoneNumbersOptedOut",
+          "sns:GetEndpointAttributes",
+          "sns:SetSubscriptionAttributes",
+          "sns:GetSMSSandboxAccountStatus",
+          "sns:CreateSMSSandboxPhoneNumber",
+          "sns:ListPlatformApplications",
+          "sns:GetSMSAttributes"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Sid": "VisualEditor1",
+        "Effect": "Allow",
+        "Action": "sqs:SendMessage",
+        "Resource": "arn:aws:sqs:ap-south-1:*:*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "sns_to_sqs_role_policy_attach" {
+  role       = aws_iam_role.sns_to_sqs_role.name
+  policy_arn = aws_iam_policy.sns_publish_and_sqs_send_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_apigw_cloudwatch_policy" {
+  role       = aws_iam_role.sns_to_sqs_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+}
+
+
+```
+</details>
+
+***
+
+## api-gateway/main.tf
+
+### main.tf file
+
+<details>
+<summary> Click here to see main.tf file</summary>
+<br>
+
+```shell
+module "nse_callback_api" {
+  source                      = "../../global/modules/api-gateway"
+  api_name                    = var.nse_callback_api.api_name
+  api_description             = var.nse_callback_api.api_description
+  api_stage_name              = var.nse_callback_api.api_stage_name
+  api_resources               = var.nse_callback_api.api_resources
+  method_type                 = var.nse_callback_api.method_type
+  integration_type            = var.nse_callback_api.integration_type
+  sns_action_name             = var.nse_callback_api.sns_action_name
+  role_arn                    = aws_iam_role.sns_to_sqs_role.arn
+  endpoint_type               = var.nse_callback_api.endpoint_type
+  aws_region                  = var.region
+  sns_topic_name              = var.nse_callback_api.sns_topic_name
+  request_templates           = var.nse_callback_api.request_templates
+  integration_response_templates = var.nse_callback_api.integration_response_templates
+  base_path                   = var.nse_callback_api.base_path
+  domain_name                 = aws_apigatewayv2_domain_name.custom_domain.domain_name
+}
+
+module "cashfree_callback_api" {
+  source                      = "../../global/modules/api-gateway"
+  api_name                    = var.cashfree_callback_api.api_name
+  api_description             = var.cashfree_callback_api.api_description
+  api_stage_name              = var.cashfree_callback_api.api_stage_name
+  api_resources               = var.cashfree_callback_api.api_resources
+  method_type                 = var.cashfree_callback_api.method_type
+  integration_type            = var.cashfree_callback_api.integration_type
+  sns_action_name             = var.cashfree_callback_api.sns_action_name
+  role_arn                    = aws_iam_role.sns_to_sqs_role.arn
+  endpoint_type               = var.cashfree_callback_api.endpoint_type
+  aws_region                  = var.region
+  sns_topic_name              = var.cashfree_callback_api.sns_topic_name
+  request_templates           = var.cashfree_callback_api.request_templates
+  integration_response_templates = var.cashfree_callback_api.integration_response_templates
+  base_path                   = var.cashfree_callback_api.base_path
+  domain_name                 = aws_apigatewayv2_domain_name.custom_domain.domain_name
+}
+```
+</details>
+
+***
+## api-gateway/variables.tf
+
+### variables.tf file
+
+<details>
+<summary> Click here to see variables.tf file</summary>
+<br>
+
+```shell
+variable "region" {
+  description = "AWS Region"
+  type        = string
+  default     = "ap-south-1"
+}
+variable "nse_callback_api" {
+  type = object({
+    api_name                    = string
+    api_description             = string
+    api_stage_name              = string
+    api_resources               = string
+    method_type                 = string
+    integration_type            = string
+    endpoint_type               = string
+    sns_action_name             = string
+    integration_uri             = string
+    acm_certificate_arn         = string
+    domain_name                 = string
+    base_path                   = string
+    integration_response_templates = map(string)
+    request_templates           = map(string)
+    sns_topic_name              = string
+  })
+}
+
+variable "cashfree_callback_api" {
+  type = object({
+    api_name                    = string
+    api_description             = string
+    api_stage_name              = string
+    api_resources               = string
+    method_type                 = string
+    integration_type            = string
+    endpoint_type               = string
+    sns_action_name             = string
+    integration_uri             = string
+    acm_certificate_arn         = string
+    domain_name                 = string
+    base_path                   = string
+    integration_response_templates = map(string)
+    request_templates           = map(string)
+    sns_topic_name              = string
+  })
+}
+```
+</details>
+
+***
+
+## api-gateway/terraform.tfvars
+
+### terraform.tfvars file
+
+<details>
+<summary> Click here to see terraform.tfvars file</summary>
+<br>
+
+```shell
+nse_callback_api = {
+  api_name         = "NSECallbackAPI"
+  api_description  = "API for NSE callbacks"
+  api_stage_name   = "nse-callbacks"
+  api_resources    = "nse-callbacks"
+  method_type      = "POST"  # Specify the method type here
+  integration_type = "AWS"
+  endpoint_type    = "EDGE"
+  sns_action_name  = "Publish"
+  base_path        = "v1/notification"
+  domain_name      = "devops-ml.online"
+  sns_topic_name   = "NSECallbackAPI"
+  acm_certificate_arn = "arn:aws:acm:ap-south-1:686255949108:certificate/5221358b-87b0-4150-89aa-282fa0eb50df"
+  integration_uri  = "arn:aws:apigateway:ap-south-1:sns:path//"  # Provide the correct integration URI
+  request_templates = {
+    "application/x-www-form-urlencoded" = <<EOF
+Action=Publish&TopicArn=$util.urlEncode('arn:aws:sns:ap-south-1:730288278641:NSECallbackAPI')&TopicName='NSECallbackAPI'
+&Message=$util.urlEncode($util.urlEncode($input.body))&Subject=test
+EOF
+  }
+  integration_response_templates = {
+    "application/json" = <<EOF
+#set($inputRoot = $input.path('$'))
+#if($inputRoot.body-json.PublishResponse.PublishResult.MessageId)
+    {
+        "code":200
+    }
+#else
+    {
+        "code":200
+    }
+#end
+EOF
+  }
+}
+
+cashfree_callback_api = {
+  api_name         = "CashfreeCallbackAPI"
+  api_description  = "API for Cashfree callbacks"
+  api_stage_name   = "cashfree_callbacks"
+  api_resources    = "cashfree-callbacks"
+  method_type      = "POST"  # Specify the method type here
+  integration_type = "AWS"
+  endpoint_type    = "EDGE"
+  sns_action_name  = "Publish"
+  base_path        = "v1/cashfree-callback"
+  domain_name      = "devops-ml.online"
+  sns_topic_name   = "CashfreeCallbackAPI"
+  acm_certificate_arn = "arn:aws:acm:ap-south-1:686255949108:certificate/5221358b-87b0-4150-89aa-282fa0eb50df"
+  integration_uri  = "arn:aws:apigateway:ap-south-1:sns:path//"  # Provide the correct integration URI
+  request_templates = {
+    "application/x-www-form-urlencoded" = <<EOF
+Action=Publish&TopicArn=$util.urlEncode('arn:aws:sns:ap-south-1:730288278641:CashfreeCallbackAPI')&TopicName='CashfreeCallbackAPI'
+&Message=$util.urlEncode($util.urlEncode($input.body))&Subject=test
+EOF
+  }
+  integration_response_templates = {
+    "application/json" = <<EOF
+#set($inputRoot = $input.path('$'))
+#if($inputRoot.body-json.PublishResponse.PublishResult.MessageId)
+    {
+        "code":200
+    }
+#else
+    {
+        "code":200
+    }
+#end
+EOF
+  }
+}
+```
+</details>
+
+***
 
 # Output
 
