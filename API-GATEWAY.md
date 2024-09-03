@@ -44,7 +44,7 @@ An API Gateway Terraform module is a reusable and configurable infrastructure-as
 
 # Flow Diagram
 
-<img width="950" alt="image" src="https://github.com/CodeOps-Hub/Documentation/assets/156057205/9b5ae612-95d9-4cf4-9612-d9874fcfd843">
+<img width="950" alt="image" src="https://github.com/user-attachments/assets/7c6d4425-c1dc-44dc-8c3c-83c0cee6472a">
 
 ***
 
