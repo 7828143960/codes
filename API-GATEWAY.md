@@ -69,73 +69,107 @@ An API Gateway Terraform module is a reusable and configurable infrastructure-as
   
 ```shell
 
-# Security Group #
-locals {
-  inbound_ports  = var.inbound_ports
-  outbound_ports = var.outbound_ports
+
+resource "aws_api_gateway_rest_api" "this" {
+  name        = var.api_name
+  description = var.api_description
 }
 
-resource "aws_security_group" "sec_grp" {
-  name        = var.sec_grp_name
-  description = var.Sec_grp_description
-  vpc_id      = var.vpc_id
+# Use the root resource directly for the API Gateway
+resource "aws_api_gateway_method" "this" {
+  rest_api_id   = aws_api_gateway_rest_api.this.id
+  resource_id   = aws_api_gateway_rest_api.this.root_resource_id
+  http_method   = var.method_type
+  authorization = "NONE"
+}
 
-  dynamic "ingress" {
-    for_each = local.inbound_ports
-    content {
-      from_port       = ingress.value.port
-      to_port         = ingress.value.port
-      protocol        = ingress.value.protocol
-      cidr_blocks      = contains(keys(ingress.value), "cidr_blocks") ? [ingress.value.cidr_blocks] : null
-      security_groups  = contains(keys(ingress.value), "security_group_ids") ? [ingress.value.security_group_ids] : null
+# Define the API Gateway integration
+resource "aws_api_gateway_integration" "this" {
+  rest_api_id             = aws_api_gateway_rest_api.this.id
+  resource_id             = aws_api_gateway_rest_api.this.root_resource_id
+  http_method             = aws_api_gateway_method.this.http_method
+  type                    = "AWS"
+  integration_http_method = "POST"
+  uri                     = "arn:aws:apigateway:${var.aws_region}:sns:action/${var.sns_action_name}"
+  passthrough_behavior    = "WHEN_NO_MATCH"
+  timeout_milliseconds    = 29000
+  credentials             = var.role_arn
+  request_templates       = var.request_templates
+  request_parameters      = {
+    "integration.request.header.Content-Type" = "'application/x-www-form-urlencoded'"
+  }
+}
+
+
+# Define the API Gateway response model
+resource "aws_api_gateway_model" "response_model" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  name        = "ResponseModel"
+  description = "Model for API Gateway response"
+  schema      = jsonencode({
+    "$schema" = "http://json-schema.org/draft-04/schema#"
+    type      = "object"
+    properties = {
+      code = {
+        type = "integer"
+      }
     }
+  })
+  content_type = "application/json"
+}
+
+# Define the method response
+resource "aws_api_gateway_method_response" "this" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  resource_id = aws_api_gateway_rest_api.this.root_resource_id
+  http_method = aws_api_gateway_method.this.http_method
+  status_code = "200"
+
+  # Specify the response model
+  response_models = {
+    "application/json" = aws_api_gateway_model.response_model.name
   }
 
-  dynamic "egress" {
-    for_each = local.outbound_ports
-    content {
-      from_port   = egress.value.port
-      to_port     = egress.value.port
-      protocol    = egress.value.protocol
-      cidr_blocks = [egress.value.cidr_blocks]
-    }
+  # Define the response parameters
+  response_parameters = {
+    "method.response.header.Content-Type" = true
   }
-
-  tags = var.Sec_grp_tags
 }
 
-/*------------Genrate-Key--------------*/
-resource "tls_private_key" "rsa_4096" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+resource "aws_api_gateway_integration_response" "this" {
+   depends_on = [aws_api_gateway_integration.this]
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  resource_id = aws_api_gateway_rest_api.this.root_resource_id
+  http_method = aws_api_gateway_method.this.http_method
+  status_code = aws_api_gateway_method_response.this.status_code
+  response_templates = var.integration_response_templates
 }
 
-/*----------pem Key----------------------*/
-resource "aws_key_pair" "key_pair" {
-  key_name   = var.key_name
-  public_key = tls_private_key.rsa_4096.public_key_openssh
+
+
+# Define the API Gateway deployment
+resource "aws_api_gateway_deployment" "this" {
+  depends_on  = [aws_api_gateway_integration.this]
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  stage_name  = var.api_stage_name
 }
 
-/*----------Download Pem Key-------------------*/
-resource "local_file" "private_key" {
-  content  = tls_private_key.rsa_4096.private_key_pem
-  filename = var.key_name
-}
 
-/*-----------Server-------------------*/
+# Define the custom domain name and ACM certificate
 
-resource "aws_instance" "standalone_server" {
-  ami                         = data.aws_ami.ubuntu.id
-  instance_type               = var.server_type
-  key_name                    = aws_key_pair.key_pair.key_name
-  subnet_id                   = var.subnet_id
-  associate_public_ip_address = false
-  vpc_security_group_ids      = [aws_security_group.sec_grp.id]
-  tags = {
-    Name = var.server_name
-    Type = "dev"
-  }
 
+# resource "aws_api_gateway_base_path_mapping" "this" {
+#   api_id      = aws_api_gateway_rest_api.this.id
+#   domain_name = var.domain_name
+#   base_path   = var.base_path  
+#   stage_name  = var.api_stage_name
+# }
+
+resource "aws_apigatewayv2_api_mapping" "this" {
+  api_id      = aws_api_gateway_rest_api.this.id
+  domain_name = var.domain_name
+  stage       = var.api_stage_name
+  api_mapping_key = var.base_path
 }
 ```
 </details>
@@ -151,66 +185,87 @@ resource "aws_instance" "standalone_server" {
 <br>
   
 ```shell
-variable "sec_grp_name" {
-  description     = "Name for the security group"
-  type            = string
-  default         = "dev_sg"
-}
-variable "Sec_grp_description" {
-  description     = "Description for the security group"
-  type            = string
-  default         = "Security group for Dev Env"
-}
-variable "vpc_id" {
-  description     = "ID of the VPC for instances"
-  type            = string
-}
-
-variable "inbound_ports" {
-  description     = "List of inbound ports, protocols and cidr block"
-  type            = list(map(any))
-  default         = [
-    { port = 22, protocol = "tcp",cidr_blocks = "20.0.0.0/28" },
-    { port = 22, protocol = "TCP", security_group_ids = "sg-051aa66773d7b86c9" },
-  ]
-}
-
-variable "outbound_ports" {
-  description     = "List of outbound ports, protocols and Cidr block "
-  type            = list(map(any))
-  default         = [
-    { port = 0, protocol = "-1", cidr_blocks = "0.0.0.0/0", },
-  ]
-}
-variable "Sec_grp_tags" {
-  type            = map(string)
-  default         = {
-    Name          = "dev-sg"
-    Enviroment    = "dev"
-    Owner         = "shreya"
-  }
-}
-
-variable "key_name" {
-  description = "Name of the SSH key pair"
+variable "api_name" {
+  description = "The name of the API Gateway"
   type        = string
 }
 
-variable "server_type" {
-  description = "Instance type for Standalone server"
+variable "api_description" {
+  description = "The description of the API Gateway"
   type        = string
 }
 
-variable "subnet_id" {
-  description = "ID of the subnet for the Standalone server"
+
+variable "api_stage_name" {
+  description = "The deployment stage name for the API"
   type        = string
 }
 
-variable "server_name" {
-  description = "Name tag for the standalone server"
+variable "api_resources" {
+  description = "The API Gateway resources path"
   type        = string
 }
 
+variable "method_type" {
+  description = "The HTTP method type (GET, POST, etc.)"
+  type        = string
+}
+
+variable "integration_type" {
+  description = "The integration type for the API Gateway"
+  type        = string
+}
+
+
+variable "role_arn" {
+  description = "ARN of the IAM role"
+  type        = string
+}
+
+variable "endpoint_type" {
+  description = "The endpoint type (EDGE, REGIONAL, PRIVATE)"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "The AWS region where the API Gateway and SNS are hosted"
+  type        = string
+}
+
+variable "sns_action_name" {
+  description = "The action name for the SNS integration"
+  type        = string
+  default     = "Publish"  
+}
+
+
+variable "sns_topic_name" {
+  description = "The SNS topic name to be used"
+  type        = string
+}
+
+
+variable "request_templates" {
+  description = "Map of request templates for API Gateway integration"
+  type        = map(string)
+}
+
+variable "domain_name" {
+  description = "Custom domain name for API Gateway"
+  type        = string
+}
+
+
+
+variable "base_path" {
+  description = "The base path for the API mapping"
+  type        = string
+}
+
+variable "integration_response_templates" {
+  description = "The mapping template for integration responses"
+  type        = map(string)
+}
 ```
 </details>
 
@@ -300,17 +355,14 @@ data "aws_ami" "ubuntu" {
 | **Input Validation**  | Validate input variables to ensure they meet expected requirements and constraints.                                |
 | **Documentation**     | Provide clear documentation, including usage examples, input variables, and outputs.                               |
 | **Testing**           | Implement automated tests to validate functionality and prevent regressions.                                       |
-| **Versioning**        | Follow semantic versioning to manage changes and dependencies effectively.                                         |
 | **Error Handling**    | Implement error handling and logging mechanisms for troubleshooting.                                               |
-| **Idempotency**       | Ensure modules are idempotent, allowing multiple applications without unintended changes.                          |
 | **State Management**  | Avoid storing sensitive information in Terraform state files and leverage remote state management for better security.|
-| **Separation of Concerns**| Separate infrastructure concerns into reusable modules based on functionality or lifecycle.                       |
 
 ***
 
 # Conclusion
 
-Terraform modules are a fundamental building block for creating reusable and maintainable infrastructure as code. By following best practices and principles such as modularity, abstraction, and versioning, teams can leverage modules to efficiently manage complex infrastructure deployments at scale.The VM module, housed within the network directory, defines resources for provisioning virtual machines. It includes configurations for specifying the Amazon Machine Image (AMI), instance type, key pair, subnet, and security groups. This modular approach enhances code organization and facilitates easier management of virtual machine deployments within the larger infrastructure setup.
+Terraform modules are a fundamental building block for creating reusable and maintainable infrastructure as code. By following best practices and principles such as modularity, abstraction, and versioning, teams can leverage modules to efficiently manage complex infrastructure deployments at scale.By leveraging this module, teams can ensure consistent, scalable, and secure API infrastructure, reducing the complexity of manual setups and enabling faster development cycles. 
 
 ***
 
@@ -318,7 +370,7 @@ Terraform modules are a fundamental building block for creating reusable and mai
 
 | **Name** | **Email Address** |
 | -------- | ----------------- |
-| **Shreya Jaiswal** | shreya.jaiswal.snaatak@mygurukulam.co |
+| **Shreya Jaiswal** | shreya.jaiswal@mygurukulam.co |
 
 ***
 
@@ -326,6 +378,5 @@ Terraform modules are a fundamental building block for creating reusable and mai
 
 | **Source** | **Description** |
 | ---------- | --------------- |
-| [Link](https://github.com/CodeOps-Hub/Documentation/blob/main/Application_CI/Implementation/GenericDoc/Terraform/terraform.md) | Terraform Generic Doc Link. |
+| [Link](https://medium.com/onfido-tech/aws-api-gateway-with-terraform-7a2bebe8b68f) | API Gateway Module. |
 | [Link](https://developer.hashicorp.com/terraform/language/modules) | Terraform Module Concept. |
-| [Link](https://medium.com/@selvamraju007/terraform-modules-explanation-726ba4a0b98e) | Reference Link For Terraform Modules. |
