@@ -15,7 +15,6 @@
 * [Why Terraform Module](#Why-Terraform-Module)
 * [Flow Diagram](#Flow-Diagram)
 * [Pre-requisites](#Pre-requisites)
-* [Directory Structure](#Directory-Structure)
 * [Configuration Files](#Configuration-Files)
 * [Output](#Output)
 * [Best Practices](#Best-Practices)
@@ -55,12 +54,6 @@ An API Gateway Terraform module is a reusable and configurable infrastructure-as
 | ----------------- | --------------- |
 | **AWS Account**   | Access to the AWS Management Console with credentials configured. |
 | **Hashicrop Terraform** | Terraform **(v1.7.4)** for configuration of AWS resources. |
-
-***
-
-# Directory Structure
-
-<img width="500" alt="image" src="https://github.com/CodeOps-Hub/Documentation/assets/156057205/25103345-c972-4fc0-ade1-7d470c9db529">
 
 ***
 
