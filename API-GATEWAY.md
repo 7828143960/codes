@@ -1,4 +1,4 @@
-# Generic Doc for VM Module (Standalone Server)
+# Documentation of Terraform Module for API-Gateway
 
 <img width="360" length="100" alt="Terraform" src="https://github.com/user-attachments/assets/3845da7d-0f74-4280-ad2c-8de088143297">
 
