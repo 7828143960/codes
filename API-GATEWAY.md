@@ -27,8 +27,6 @@
 
 # Introduction
 
-<img width="400" alt="image" src="https://github.com/CodeOps-Hub/Documentation/assets/156057205/643d0c30-6c1e-4088-bba3-5b1c91be9253">
-
 A Terraform module is a container for organizing and reusing Terraform code to manage related resources. It encapsulates a set of resources and configurations into a single unit that can be easily shared, reused, and versioned. Modules promote code reusability, maintainability, and scalability in Terraform projects.
 
 ***
