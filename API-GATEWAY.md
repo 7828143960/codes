@@ -61,6 +61,8 @@ An API Gateway Terraform module is a reusable and configurable infrastructure-as
 
 ## modules/api-gateway/main.tf
 
+This Terraform configuration defines an AWS API Gateway REST API with methods, integrations, responses, and deployments, allowing seamless integration with AWS services such as SNS. It also sets up API mappings for custom domain names, enhancing API management and accessibility.
+
 ### main.tf file
 
 <details>
@@ -178,6 +180,8 @@ resource "aws_apigatewayv2_api_mapping" "this" {
 
 ## modules/api-gateway/variables.tf
 
+These Terraform variables define configurable parameters for setting up an AWS API Gateway, such as API name, description, stage, methods, integration details, and custom domain settings. 
+
 ### variables.tf file
 
 <details>
@@ -273,6 +277,8 @@ variable "integration_response_templates" {
 
 ## modules/api-gateway/provider.tf
 
+Terraform provider configuration specifies the AWS region as `ap-south-1 (Mumbai)` for deploying resources. It enables Terraform to interact with AWS services in the specified region.
+
 ### provider.tf file
 
 <details>
@@ -290,6 +296,8 @@ provider "aws" {
 ***
 
 ## api-gateway/backend.tf
+
+This Terraform configuration sets up remote state storage in an S3 bucket named broking-staging-tf-state with state locking managed by a DynamoDB table. It ensures secure and consistent state management for deployments in the `ap-south-1` region.
 
 ### backend.tf file
 
@@ -314,6 +322,8 @@ terraform {
 
 ## api-gateway/custom_domain.tf
 
+This resource configures a custom domain for API Gateway using AWS API Gateway V2, specifying the domain name and associated ACM certificate for secure HTTPS communication. It uses a regional endpoint with TLS 1.2 security for enhanced security compliance.
+
 ### custom_domain.tf file
 
 <details>
@@ -335,6 +345,8 @@ resource "aws_apigatewayv2_domain_name" "custom_domain" {
 ***
 
 ## api-gateway/iam.tf
+
+This Terraform configuration creates an IAM role with policies to allow API Gateway to publish messages to SNS and send messages to SQS. It attaches necessary permissions, including a managed policy for API Gateway logging to CloudWatch, ensuring secure and traceable API operations.
 
 ### iam.tf file
 
@@ -440,6 +452,8 @@ resource "aws_iam_role_policy_attachment" "attach_apigw_cloudwatch_policy" {
 
 ## api-gateway/main.tf
 
+These Terraform module configurations create two API Gateway setups (nse_callback_api and cashfree_callback_api) using a reusable module for managing API resources, methods, integrations, and custom domains. They specify API details, integration settings, and IAM roles for secure API operations and SNS-SQS integration.
+
 ### main.tf file
 
 <details>
@@ -489,6 +503,8 @@ module "cashfree_callback_api" {
 
 ***
 ## api-gateway/variables.tf
+
+These Terraform variables define configurations for two API Gateway callback APIs (nse_callback_api and cashfree_callback_api), encapsulating API properties such as name, stage, resources, methods, integration settings, and domain details.
 
 ### variables.tf file
 
@@ -547,6 +563,8 @@ variable "cashfree_callback_api" {
 ***
 
 ## api-gateway/terraform.tfvars
+
+These variable definitions configure two API Gateway callback APIs (nse_callback_api and cashfree_callback_api), specifying details such as API names, stages, resource paths, HTTP methods, and integration settings.
 
 ### terraform.tfvars file
 
