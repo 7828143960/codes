@@ -665,18 +665,6 @@ EOF
 
 ***
 
-### Private Key
-
-<img width="900" alt="image" src="https://github.com/CodeOps-Hub/Documentation/assets/156057205/cd56aa74-2a0f-4fd1-a2e4-848805eb627b">
-
-***
-
-### EC2 Instance
-
-<img width="900" alt="image" src="https://github.com/CodeOps-Hub/Documentation/assets/156057205/0e1d3c60-eada-4a04-92a6-bb4fff18b064">
-
-***
-
 # Best Practices
 
 | Practice              | Description                                                                                                        |
