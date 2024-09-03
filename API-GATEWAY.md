@@ -61,8 +61,6 @@ An API Gateway Terraform module is a reusable and configurable infrastructure-as
 
 ### main.tf file
 
-**The `main.tf` file contains the configuration for creating various AWS resources such as security groups, key pair and EC2 Instance.**
-
 <details>
 <summary> Click here to see main.tf file</summary>
 <br>
@@ -178,8 +176,6 @@ resource "aws_apigatewayv2_api_mapping" "this" {
 
 ### variables.tf file
 
-**The `variables.tf` file defines input variables used in the `main.tf` file to parameterize the configuration. These variables include vpc, subnet, security group, private key and instance related configurations .**
-
 <details>
 <summary> Click here to see variables.tf file</summary>
 <br>
@@ -271,20 +267,15 @@ variable "integration_response_templates" {
 
 ***
 
-### output.tf file
-
-**The `output.tf` file specifies the outputs of the Terraform configuration. It includes the IDs of Securioty Group and EC2 Instance.**
+### provider.tf file
 
 <details>
-<summary> Click here to see output.tf file</summary>
+<summary> Click here to see provider.tf file</summary>
 <br>
 
 ```shell
-output "Security_Group_ID" {
-  value = [aws_security_group.sec_grp.id]
-}
-output "server_id" {
-  value = [aws_instance.standalone_server.id]
+provider "aws" {
+  region = "ap-south-1"  # Change to your preferred region
 }
 
 ```
