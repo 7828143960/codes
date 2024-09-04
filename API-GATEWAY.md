@@ -6,7 +6,7 @@
 
 | **Author** | **Created on** | **Last Updated** | **Document Version** |
 | ---------- | -------------- | ---------------- | -------------------- |
-| **Shreya Jaiswal** | **03 september 2024** | **03 september 2024** | **v1** |
+| **Shreya Jaiswal** | **03 september 2024** | **04 september 2024** | **v1** |
 
 ***
 
@@ -16,7 +16,6 @@
 * [Flow Diagram](#Flow-Diagram)
 * [Pre-requisites](#Pre-requisites)
 * [Configuration Files](#Configuration-Files)
-* [Output](#Output)
 * [Best Practices](#Best-Practices)
 * [Conclusion](#Conclusion)
 * [Contact Information](#Contact-Information)
@@ -279,6 +278,7 @@ variable "integration_response_templates" {
 
 ## modules/api-gateway/output.tf
 
+The rest_api_id output provides the ID of the REST API created using the aws_api_gateway_rest_api resource, making it accessible for use in other parts of the Terraform configuration.The api_mapping_key output provides the mapping key associated with the API Gateway V2 API mapping, allowing you to reference the key in other configurations or deployments.
 
 ### output.tf file
 
@@ -299,7 +299,7 @@ output "api_mapping_key" {
 
 ***
 
-## modules/api-gateway/provider.tf
+## api-gateway/provider.tf
 
 Terraform provider configuration specifies the AWS region as `ap-south-1 (Mumbai)` for deploying resources. It enables Terraform to interact with AWS services in the specified region.
 
@@ -476,7 +476,7 @@ resource "aws_iam_role_policy_attachment" "attach_apigw_cloudwatch_policy" {
 
 ## api-gateway/main.tf
 
-These Terraform module configurations create two API Gateway setups (nse_callback_api and cashfree_callback_api) using a reusable module for managing API resources, methods, integrations, and custom domains. They specify API details, integration settings, and IAM roles for secure API operations and SNS-SQS integration.
+The api_gateway module is instantiated for each API defined in the var.api variable, configuring an API Gateway with various parameters such as API name, description, stage, resources, and integration types. It also sets up SNS integration, IAM roles, endpoint types, region, and domain-related configurations for managing REST API deployments.
 
 ### main.tf file
 
@@ -485,42 +485,24 @@ These Terraform module configurations create two API Gateway setups (nse_callbac
 <br>
 
 ```shell
-module "nse_callback_api" {
+module "api_gateway" {
   source                      = "../../global/modules/api-gateway"
-  api_name                    = var.nse_callback_api.api_name
-  api_description             = var.nse_callback_api.api_description
-  api_stage_name              = var.nse_callback_api.api_stage_name
-  api_resources               = var.nse_callback_api.api_resources
-  method_type                 = var.nse_callback_api.method_type
-  integration_type            = var.nse_callback_api.integration_type
-  sns_action_name             = var.nse_callback_api.sns_action_name
+  for_each = var.api
+  api_name                    =  each.value.api_name
+  api_description             =  each.value.api_description
+  api_stage_name              =  each.value.api_stage_name
+  api_resources               =  each.value.api_resources
+  method_type                 =  each.value.method_type
+  integration_type            =  each.value.integration_type
+  sns_action_name             =  each.value.sns_action_name
   role_arn                    = aws_iam_role.sns_to_sqs_role.arn
-  endpoint_type               = var.nse_callback_api.endpoint_type
+  endpoint_type               =  each.value.endpoint_type
   aws_region                  = var.region
-  sns_topic_name              = var.nse_callback_api.sns_topic_name
-  request_templates           = var.nse_callback_api.request_templates
-  integration_response_templates = var.nse_callback_api.integration_response_templates
-  base_path                   = var.nse_callback_api.base_path
-  domain_name                 = aws_apigatewayv2_domain_name.custom_domain.domain_name
-}
-
-module "cashfree_callback_api" {
-  source                      = "../../global/modules/api-gateway"
-  api_name                    = var.cashfree_callback_api.api_name
-  api_description             = var.cashfree_callback_api.api_description
-  api_stage_name              = var.cashfree_callback_api.api_stage_name
-  api_resources               = var.cashfree_callback_api.api_resources
-  method_type                 = var.cashfree_callback_api.method_type
-  integration_type            = var.cashfree_callback_api.integration_type
-  sns_action_name             = var.cashfree_callback_api.sns_action_name
-  role_arn                    = aws_iam_role.sns_to_sqs_role.arn
-  endpoint_type               = var.cashfree_callback_api.endpoint_type
-  aws_region                  = var.region
-  sns_topic_name              = var.cashfree_callback_api.sns_topic_name
-  request_templates           = var.cashfree_callback_api.request_templates
-  integration_response_templates = var.cashfree_callback_api.integration_response_templates
-  base_path                   = var.cashfree_callback_api.base_path
-  domain_name                 = aws_apigatewayv2_domain_name.custom_domain.domain_name
+  sns_topic_name              =  each.value.sns_topic_name
+  request_templates           =  each.value.request_templates
+  integration_response_templates =  each.value.integration_response_templates
+  base_path                   =  each.value.base_path
+  domain_name                 =  each.value.domain_name
 }
 ```
 </details>
@@ -542,28 +524,16 @@ variable "region" {
   type        = string
   default     = "ap-south-1"
 }
-variable "nse_callback_api" {
-  type = object({
-    api_name                    = string
-    api_description             = string
-    api_stage_name              = string
-    api_resources               = string
-    method_type                 = string
-    integration_type            = string
-    endpoint_type               = string
-    sns_action_name             = string
-    integration_uri             = string
-    acm_certificate_arn         = string
-    domain_name                 = string
-    base_path                   = string
-    integration_response_templates = map(string)
-    request_templates           = map(string)
-    sns_topic_name              = string
-  })
+variable "api-domain_name" {
+  default = "devops-ml.online"
+}
+variable "acm_certificate" {
+  default = "arn:aws:acm:ap-south-1:686255949108:certificate/5221358b-87b0-4150-89aa-282fa0eb50df"
+  
 }
 
-variable "cashfree_callback_api" {
-  type = object({
+variable "api" {
+  type = map(object({
     api_name                    = string
     api_description             = string
     api_stage_name              = string
@@ -579,8 +549,9 @@ variable "cashfree_callback_api" {
     integration_response_templates = map(string)
     request_templates           = map(string)
     sns_topic_name              = string
-  })
+  }))
 }
+
 ```
 </details>
 
@@ -597,6 +568,8 @@ These variable definitions configure two API Gateway callback APIs (nse_callback
 <br>
 
 ```shell
+api = {
+
 nse_callback_api = {
   api_name         = "NSECallbackAPI"
   api_description  = "API for NSE callbacks"
@@ -668,6 +641,8 @@ EOF
 EOF
   }
 }
+
+}
 ```
 </details>
 
@@ -701,22 +676,6 @@ output "cashfree_callback_api_output" {
 }
 ```
 </details>
-
-***
-
-# Output
-
-## Terminal Output
-
-<img width="900" alt="image" src="https://github.com/CodeOps-Hub/Documentation/assets/156057205/1c3b58fa-2136-4ad6-92de-24790585fbc2">
-
-***
-
-## Console Output
-
-### Security Group
-
-<img width="900" alt="image" src="https://github.com/CodeOps-Hub/Documentation/assets/156057205/60879fc6-f6c5-4794-8147-0476470d4a03">
 
 ***
 
