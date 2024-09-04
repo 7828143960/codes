@@ -651,6 +651,37 @@ EOF
 
 ***
 
+## api-gateway/output.tf
+
+The nse_callback_api_output block defines an output that provides the REST API ID and API mapping key for the nse_callback_api module, which is part of the API Gateway configuration.
+
+The cashfree_callback_api_output block defines an output that provides the REST API ID and API mapping key for the cashfree_callback_api module, allowing it to be used in other parts of the Terraform configuration.
+
+### output.tf file
+
+<details>
+<summary> Click here to see output.tf file</summary>
+<br>
+
+```shell
+output "nse_callback_api_output" {
+  value = {
+    rest_api_id          = module.api_gateway["nse_callback_api"].rest_api_id
+    api_mapping_key      = module.api_gateway["nse_callback_api"].api_mapping_key
+  }
+}
+
+output "cashfree_callback_api_output" {
+  value = {
+    rest_api_id          = module.api_gateway["cashfree_callback_api"].rest_api_id
+    api_mapping_key      = module.api_gateway["cashfree_callback_api"].api_mapping_key
+  }
+}
+```
+</details>
+
+***
+
 # Output
 
 ## Terminal Output
