@@ -289,7 +289,7 @@ Terraform provider configuration specifies the AWS region as `ap-south-1 (Mumbai
 
 ```shell
 provider "aws" {
-  region = "ap-south-1"  
+  region = var.region  
 }
 
 ```
