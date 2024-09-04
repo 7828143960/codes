@@ -277,6 +277,28 @@ variable "integration_response_templates" {
 
 ***
 
+## modules/api-gateway/output.tf
+
+
+### output.tf file
+
+<details>
+<summary> Click here to see output.tf file</summary>
+<br>
+
+```shell
+output "rest_api_id" {
+  value = aws_api_gateway_rest_api.this.id
+}
+
+output "api_mapping_key" {
+  value = aws_apigatewayv2_api_mapping.this.api_mapping_key
+}
+```
+</details>
+
+***
+
 ## modules/api-gateway/provider.tf
 
 Terraform provider configuration specifies the AWS region as `ap-south-1 (Mumbai)` for deploying resources. It enables Terraform to interact with AWS services in the specified region.
