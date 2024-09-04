@@ -569,29 +569,28 @@ These variable definitions configure two API Gateway callback APIs (nse_callback
 
 ```shell
 api = {
-
-nse_callback_api = {
-  api_name         = "NSECallbackAPI"
-  api_description  = "API for NSE callbacks"
-  api_stage_name   = "nse-callbacks"
-  api_resources    = "nse-callbacks"
-  method_type      = "POST"  # Specify the method type here
-  integration_type = "AWS"
-  endpoint_type    = "EDGE"
-  sns_action_name  = "Publish"
-  base_path        = "v1/notification"
-  domain_name      = "devops-ml.online"
-  sns_topic_name   = "NSECallbackAPI"
-  acm_certificate_arn = "arn:aws:acm:ap-south-1:686255949108:certificate/5221358b-87b0-4150-89aa-282fa0eb50df"
-  integration_uri  = "arn:aws:apigateway:ap-south-1:sns:path//"  # Provide the correct integration URI
-  request_templates = {
-    "application/x-www-form-urlencoded" = <<EOF
+  nse_callback_api = {
+    api_name            = "NSECallbackAPI"
+    api_description     = "API for NSE callbacks"
+    api_stage_name      = "nse-callbacks"
+    api_resources       = "nse-callbacks"
+    method_type         = "POST" # Specify the method type here
+    integration_type    = "AWS"
+    endpoint_type       = "EDGE"
+    sns_action_name     = "Publish"
+    base_path           = "v1/notification"
+    domain_name         = "devops-ml.online"
+    sns_topic_name      = "NSECallbackAPI"
+    acm_certificate_arn = "arn:aws:acm:ap-south-1:686255949108:certificate/5221358b-87b0-4150-89aa-282fa0eb50df"
+    integration_uri     = "arn:aws:apigateway:ap-south-1:sns:path//" # Provide the correct integration URI
+    request_templates = {
+      "application/x-www-form-urlencoded" = <<EOF
 Action=Publish&TopicArn=$util.urlEncode('arn:aws:sns:ap-south-1:730288278641:NSECallbackAPI')&TopicName='NSECallbackAPI'
 &Message=$util.urlEncode($util.urlEncode($input.body))&Subject=test
 EOF
-  }
-  integration_response_templates = {
-    "application/json" = <<EOF
+    }
+    integration_response_templates = {
+      "application/json" = <<EOF
 #set($inputRoot = $input.path('$'))
 #if($inputRoot.body-json.PublishResponse.PublishResult.MessageId)
     {
@@ -603,31 +602,31 @@ EOF
     }
 #end
 EOF
+    }
   }
-}
 
-cashfree_callback_api = {
-  api_name         = "CashfreeCallbackAPI"
-  api_description  = "API for Cashfree callbacks"
-  api_stage_name   = "cashfree_callbacks"
-  api_resources    = "cashfree-callbacks"
-  method_type      = "POST"  # Specify the method type here
-  integration_type = "AWS"
-  endpoint_type    = "EDGE"
-  sns_action_name  = "Publish"
-  base_path        = "v1/cashfree-callback"
-  domain_name      = "devops-ml.online"
-  sns_topic_name   = "CashfreeCallbackAPI"
-  acm_certificate_arn = "arn:aws:acm:ap-south-1:686255949108:certificate/5221358b-87b0-4150-89aa-282fa0eb50df"
-  integration_uri  = "arn:aws:apigateway:ap-south-1:sns:path//"  # Provide the correct integration URI
-  request_templates = {
-    "application/x-www-form-urlencoded" = <<EOF
+  cashfree_callback_api = {
+    api_name            = "CashfreeCallbackAPI"
+    api_description     = "API for Cashfree callbacks"
+    api_stage_name      = "cashfree_callbacks"
+    api_resources       = "cashfree-callbacks"
+    method_type         = "POST" # Specify the method type here
+    integration_type    = "AWS"
+    endpoint_type       = "EDGE"
+    sns_action_name     = "Publish"
+    base_path           = "v1/cashfree-callback"
+    domain_name         = "devops-ml.online"
+    sns_topic_name      = "CashfreeCallbackAPI"
+    acm_certificate_arn = "arn:aws:acm:ap-south-1:686255949108:certificate/5221358b-87b0-4150-89aa-282fa0eb50df"
+    integration_uri     = "arn:aws:apigateway:ap-south-1:sns:path//" # Provide the correct integration URI
+    request_templates = {
+      "application/x-www-form-urlencoded" = <<EOF
 Action=Publish&TopicArn=$util.urlEncode('arn:aws:sns:ap-south-1:730288278641:CashfreeCallbackAPI')&TopicName='CashfreeCallbackAPI'
 &Message=$util.urlEncode($util.urlEncode($input.body))&Subject=test
 EOF
-  }
-  integration_response_templates = {
-    "application/json" = <<EOF
+    }
+    integration_response_templates = {
+      "application/json" = <<EOF
 #set($inputRoot = $input.path('$'))
 #if($inputRoot.body-json.PublishResponse.PublishResult.MessageId)
     {
@@ -639,8 +638,8 @@ EOF
     }
 #end
 EOF
+    }
   }
-}
 
 }
 ```
