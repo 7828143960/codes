@@ -7,7 +7,7 @@ def call(String url, String creds, String branch, String rootPath, String childP
     gitcheckout = new checkout()
     tfinit = new init()
     tfvalidate = new validate()
-    tffmt = new fmt()
+    // tffmt = new fmt()
     tfapply = new apply()
     
     
@@ -15,7 +15,7 @@ def call(String url, String creds, String branch, String rootPath, String childP
     gitcheckout.call(url, creds, branch)
     tfinit.call(rootPath, childPath)
     tfvalidate.call(rootPath, childPath)
-    tffmt.call(rootPath, childPath)
+    // tffmt.call(rootPath, childPath)
     tfapply.call(rootPath, childPath)
     
 }
