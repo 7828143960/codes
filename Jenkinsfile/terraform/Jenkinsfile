@@ -2,16 +2,16 @@
 def terraformCI = new org.template.terraform()
 
 node {
+    // Define parameters
+    def branch = params.branch ?: 'snaatak-Jenkinsfile'
+    def rootPath = params.rootPath ?: 'Jenkinsfile'
+    def childPath = params.childPath ?: 'terraform'
+
     // Define environment variables
     withEnv([
         "AWS_ACCESS_KEY_ID=${credentials('vishal-aws-creds')}",
         "AWS_SECRET_ACCESS_KEY=${credentials('vishal-aws-creds')}"
     ]) {
-
-        // Define parameters
-        def branch = input message: 'Enter the branch name', parameters: [string(defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name', name: 'branch')]
-        def rootPath = input message: 'Enter the root directory path', parameters: [string(defaultValue: 'Jenkinsfile', description: 'Enter the root directory path', name: 'rootPath')]
-        def childPath = input message: 'Enter the child directory path', parameters: [string(defaultValue: 'terraform', description: 'Enter the child directory path', name: 'childPath')]
 
         // Define repository URL and credentials
         def url = 'https://github.com/7828143960/shreya_private.git'
@@ -21,3 +21,12 @@ node {
         terraformCI.call(url, creds, branch, rootPath, childPath)
     }
 }
+
+// Define the pipeline parameters
+properties([
+    parameters([
+        string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
+        string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
+        string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
+    ])
+])
