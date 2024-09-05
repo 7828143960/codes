@@ -14,8 +14,8 @@ pipeline {
         // choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform action (apply/destroy)')
     }
     stages {
-        stage('') {  // Empty stage name
-            steps {
+       // stage('') {  // Empty stage name
+            // steps {
                 script {
                     def url = 'https://github.com/7828143960/shreya_private.git'
                     def creds = 'shreya-github-id'
@@ -23,5 +23,5 @@ pipeline {
                 }
             }
         }
-    }
-}
+ //   }
+// }
