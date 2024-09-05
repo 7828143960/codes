@@ -13,7 +13,7 @@ pipeline {
         string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
         // choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform action (apply/destroy)')
     }
-    stages {
+    // stages {
        // stage('') {  // Empty stage name
             // steps {
                 script {
@@ -22,6 +22,6 @@ pipeline {
                     terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
                 }
             }
-        }
+      //  }
  //   }
 // }
