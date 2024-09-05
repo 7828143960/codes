@@ -2,31 +2,23 @@
 def terraformCI = new org.template.terraform()
 
 node {
-    // Define parameters
-    def branch = params.branch ?: 'snaatak-Jenkinsfile'
-    def rootPath = params.rootPath ?: 'Jenkinsfile'
-    def childPath = params.childPath ?: 'terraform'
+    // Parameters
+    def branch = input(message: 'Enter the branch name', parameters: [string(defaultValue: 'snaatak-Jenkinsfile', description: 'Branch name', name: 'branch')])
+    def rootPath = input(message: 'Enter the root directory path', parameters: [string(defaultValue: 'Jenkinsfile', description: 'Root directory path', name: 'rootPath')])
+    def childPath = input(message: 'Enter the child directory path', parameters: [string(defaultValue: 'terraform', description: 'Child directory path', name: 'childPath')])
 
-    // Define environment variables
+    // Environment variables
     withEnv([
         "AWS_ACCESS_KEY_ID=${credentials('vishal-aws-creds')}",
         "AWS_SECRET_ACCESS_KEY=${credentials('vishal-aws-creds')}"
     ]) {
-
-        // Define repository URL and credentials
-        def url = 'https://github.com/7828143960/shreya_private.git'
-        def creds = 'shreya-github-id'
-
-        // Call the shared library method
-        terraformCI.call(url, creds, branch, rootPath, childPath)
+        try {
+            def url = 'https://github.com/7828143960/shreya_private.git'
+            def creds = 'shreya-github-id'
+            terraformCI.call(url, creds, branch, rootPath, childPath)
+        } catch (Exception e) {
+            currentBuild.result = 'FAILURE'
+            throw e
+        }
     }
 }
-
-// Define the pipeline parameters
-properties([
-    parameters([
-        string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
-        string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
-        string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
-    ])
-])
