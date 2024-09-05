@@ -5,7 +5,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
         AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
-        // TF_CLI_ARGS = '-input=false'
+        TF_CLI_ARGS = '-input=false'
     }
     stages {
         stage('Terraform') {
@@ -20,11 +20,11 @@ pipeline {
                         ])
                     ])
                     
-                    {
+                    
                     def url = 'https://github.com/7828143960/shreya_private.git'
                     def creds = 'shreya-github-id'
                     terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
-                     }
+                    
                 }
             }
         }
