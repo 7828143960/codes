@@ -1,24 +1,29 @@
 @Library('my-shared-library') _
 def terraformCI = new org.template.terraform()
-
-node {
-    // Parameters
-    def branch = input(message: 'Enter the branch name', parameters: [string(defaultValue: 'snaatak-Jenkinsfile', description: 'Branch name', name: 'branch')])
-    def rootPath = input(message: 'Enter the root directory path', parameters: [string(defaultValue: 'Jenkinsfile', description: 'Root directory path', name: 'rootPath')])
-    def childPath = input(message: 'Enter the child directory path', parameters: [string(defaultValue: 'terraform', description: 'Child directory path', name: 'childPath')])
-
-    // Environment variables
-    withEnv([
-        "AWS_ACCESS_KEY_ID=${credentials('vishal-aws-creds')}",
-        "AWS_SECRET_ACCESS_KEY=${credentials('vishal-aws-creds')}"
-    ]) {
-        try {
-            def url = 'https://github.com/7828143960/shreya_private.git'
-            def creds = 'shreya-github-id'
-            terraformCI.call(url, creds, branch, rootPath, childPath)
-        } catch (Exception e) {
-            currentBuild.result = 'FAILURE'
-            throw e
+pipeline {
+    agent any
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
+        AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
+        // TF_CLI_ARGS = '-input=false'
+    }
+    stages {
+        stage('Terraform') {
+            steps {
+                script {
+                    properties([
+                        parameters([
+                            string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
+                            string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
+                            string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
+                           // choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform action (apply/destroy)')
+                        ])
+                    ])
+                    def url = 'https://github.com/7828143960/shreya_private.git'
+                    def creds = 'shreya-github-id'
+                    terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
+                }
+            }
         }
     }
 }
