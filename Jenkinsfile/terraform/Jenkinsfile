@@ -1,18 +1,22 @@
 @Library('my-shared-library') _
 def terraformCI = new org.template.terraform()
 
-// Define parameters
+// Define parameters using properties step
 properties([
-    string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
-    string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
-    string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
+    [$class: 'ParametersDefinitionProperty', parameterDefinitions: [
+        [$class: 'StringParameterDefinition', name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'],
+        [$class: 'StringParameterDefinition', name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'],
+        [$class: 'StringParameterDefinition', name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path']
+    ]]
 ])
 
 node {
+    // Define environment variables
     withEnv([
         "AWS_ACCESS_KEY_ID=${credentials('vishal-aws-creds')}",
         "AWS_SECRET_ACCESS_KEY=${credentials('vishal-aws-creds')}"
     ]) {
+        // Directly use parameters
         script {
             def url = 'https://github.com/7828143960/shreya_private.git'
             def creds = 'shreya-github-id'
