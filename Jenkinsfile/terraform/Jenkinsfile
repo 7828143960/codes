@@ -1,27 +1,22 @@
 @Library('my-shared-library') _
 def terraformCI = new org.template.terraform()
 
-pipeline {
-    agent any
-    environment {
-        AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
-        AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
-    }
-    parameters {
-        string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name')
-        string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path')
-        string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
-        // choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform action (apply/destroy)')
-    }
-    stages {
-        stage('Terraform') {  
-             steps {
-                script {
-                    def url = 'https://github.com/7828143960/shreya_private.git'
-                    def creds = 'shreya-github-id'
-                    terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
-                }
-            }
+// Define parameters
+properties([
+    string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'),
+    string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'),
+    string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
+])
+
+node {
+    withEnv([
+        "AWS_ACCESS_KEY_ID=${credentials('vishal-aws-creds')}",
+        "AWS_SECRET_ACCESS_KEY=${credentials('vishal-aws-creds')}"
+    ]) {
+        script {
+            def url = 'https://github.com/7828143960/shreya_private.git'
+            def creds = 'shreya-github-id'
+            terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
         }
     }
- }
+}
