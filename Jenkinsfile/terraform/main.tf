@@ -7,7 +7,7 @@ resource "aws_instance" "example" {
   }
 
   # Ensure you have an existing VPC and subnet
-  subnet_id                   = "subnet-0134f5449c7d97a39"  # Replace with your subnet ID
+  subnet_id                   = "subnet-05237750060238363"  # Replace with your subnet ID
   associate_public_ip_address = true               # To associate a public IP address
 
   # Optional - Add security group to allow SSH and HTTP access
@@ -17,7 +17,7 @@ resource "aws_instance" "example" {
 resource "aws_security_group" "example" {
   name        = "example-security-group"
   description = "Allow SSH and HTTP traffic"
-  vpc_id      = "vpc-01833dda82803ed0b"  # Replace with your VPC ID
+  vpc_id      = "vpc-0e084a32f37adc57c"  # Replace with your VPC ID
 
   ingress {
     from_port   = 22
