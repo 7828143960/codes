@@ -11,11 +11,8 @@ properties([
 ])
 
 node {
-    // Define environment variables
-    withEnv([
-        "AWS_ACCESS_KEY_ID=${credentials('vishal-aws-creds')}",
-        "AWS_SECRET_ACCESS_KEY=${credentials('vishal-aws-creds')}"
-    ]) {
+    // Use credentials with the withCredentials step
+    withCredentials([aws(credentialsId: 'vishal-aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
         // Directly use parameters
         script {
             def url = 'https://github.com/7828143960/shreya_private.git'
