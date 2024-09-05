@@ -1,29 +1,23 @@
 @Library('my-shared-library') _
 def terraformCI = new org.template.terraform()
 
-pipeline {
-    agent any
-    environment {
-        AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
-        AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
-    }
-    
-    parameters {
-        string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name')
-        string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path')
-        string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
-    }
+node {
+    // Define environment variables
+    withEnv([
+        "AWS_ACCESS_KEY_ID=${credentials('vishal-aws-creds')}",
+        "AWS_SECRET_ACCESS_KEY=${credentials('vishal-aws-creds')}"
+    ]) {
 
-    stages {
-        stage('Initialize and Run Pipeline') {
-            steps {
-                script {
-                    // You can define your pipeline logic here, delegating to the shared library as needed
-                    def url = 'https://github.com/7828143960/shreya_private.git'
-                    def creds = 'shreya-github-id'
-                    terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
-                }
-            }
-        }
+        // Define parameters
+        def branch = input message: 'Enter the branch name', parameters: [string(defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name', name: 'branch')]
+        def rootPath = input message: 'Enter the root directory path', parameters: [string(defaultValue: 'Jenkinsfile', description: 'Enter the root directory path', name: 'rootPath')]
+        def childPath = input message: 'Enter the child directory path', parameters: [string(defaultValue: 'terraform', description: 'Enter the child directory path', name: 'childPath')]
+
+        // Define repository URL and credentials
+        def url = 'https://github.com/7828143960/shreya_private.git'
+        def creds = 'shreya-github-id'
+
+        // Call the shared library method
+        terraformCI.call(url, creds, branch, rootPath, childPath)
     }
 }
