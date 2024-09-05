@@ -1,4 +1,4 @@
-package org.terraform.slacknotification
+package org.terraform
 
 def call() {
     def status = env.BUILD_STATUS ?: 'SUCCESS' // Default to 'SUCCESS' if BUILD_STATUS is not set
