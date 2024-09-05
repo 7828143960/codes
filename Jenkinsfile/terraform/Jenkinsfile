@@ -6,20 +6,19 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('vishal-aws-creds')
         AWS_SECRET_ACCESS_KEY = credentials('vishal-aws-creds')
-        // TF_CLI_ARGS = '-input=false'
     }
     
     parameters {
         string(name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name')
         string(name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path')
         string(name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path')
-        // choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform action (apply/destroy)')
     }
 
     stages {
-        stage('Run Terraform CI') {
+        stage('Initialize and Run Pipeline') {
             steps {
                 script {
+                    // You can define your pipeline logic here, delegating to the shared library as needed
                     def url = 'https://github.com/7828143960/shreya_private.git'
                     def creds = 'shreya-github-id'
                     terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
