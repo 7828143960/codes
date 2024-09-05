@@ -8,7 +8,7 @@ def call(String url, String creds, String branch, String rootPath, String childP
     tfinit = new init()
     tfvalidate = new validate()
     tfapply = new apply()
-    notification = new slack-notification()
+    notification = new slacknotification()
     
     
   
