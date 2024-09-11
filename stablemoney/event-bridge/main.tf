@@ -10,7 +10,7 @@ resource "aws_cloudwatch_event_rule" "schedule_rule" {
 resource "aws_lambda_permission" "allow_eventbridge" {
   for_each = { for rule in var.eventbridge_rules : rule.name => rule }
 
-  statement_id  = "AllowExecutionFromEventBridge_${each.key}"
+  statement_id  = "${var.lambda_permission_statement_id_prefix}_${each.key}"
   action        = "lambda:InvokeFunction"
   function_name = each.value.lambda_arn
   principal     = "events.amazonaws.com"
@@ -21,11 +21,10 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
   for_each = { for rule in var.eventbridge_rules : rule.name => rule }
 
   rule      = aws_cloudwatch_event_rule.schedule_rule[each.key].name
-  target_id = "lambda_target_${each.key}"
+  target_id = "${var.lambda_target_id_prefix}_${each.key}"
   arn       = each.value.lambda_arn
 
   # Optional input transformation to the Lambda function
-  input = jsonencode({
-    key1 = "value1"
-  })
+  input = jsonencode(var.input_transformation)
 }
+
