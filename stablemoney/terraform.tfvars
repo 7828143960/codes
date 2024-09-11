@@ -1,4 +1,5 @@
 region = "ap-south-1"
+
 eventbridge_rules = [
   {
     name                = "rule_1"
@@ -17,4 +18,8 @@ eventbridge_rules = [
 tags = {
   "Owner" = "devops"
   "Env"   = "dev"
+}
+
+input_transformation = {
+  key1 = "value1"
 }
