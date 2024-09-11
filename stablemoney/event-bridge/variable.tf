@@ -23,13 +23,11 @@ variable "tags" {
 variable "lambda_permission_statement_id_prefix" {
   description = "Prefix for the Lambda permission statement IDs"
   type        = string
-  default     = "AllowExecutionFromEventBridge"
 }
 
 variable "lambda_target_id_prefix" {
   description = "Prefix for the Lambda target IDs"
   type        = string
-  default     = "lambda_target"
 }
 
 variable "input_transformation" {
