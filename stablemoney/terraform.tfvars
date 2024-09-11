@@ -23,3 +23,5 @@ tags = {
 input_transformation = {
   key1 = "value1"
 }
+lambda_permission_statement_id_prefix = "AllowExecutionFromEventBridge"
+lambda_target_id_prefix = "lambda_target"
