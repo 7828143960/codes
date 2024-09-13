@@ -21,8 +21,9 @@ package org.terraform
 
 def call() {
     stage('Slack Notification') {  
-        def status = env.BUILD_STATUS ?: 'SUCCESS' 
-        def status = env.BUILD_STATUS ?: 'FAILURE'     
+        // Use currentBuild.currentResult to get the build status
+        def status = currentBuild.currentResult ?: 'SUCCESS'
+        
         def branchName = params.branch ?: 'main'
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
         
@@ -34,6 +35,8 @@ def call() {
             message = """
             Job Build successfully on branch ${branchName} at ${jobStartTime} GMT.
             """
+        } else {
+            message = "Job Status: ${status} on branch ${branchName} at ${jobStartTime} GMT."
         }
         
         // Determine the color based on build status
