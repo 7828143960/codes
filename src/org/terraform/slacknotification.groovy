@@ -1,6 +1,6 @@
 package org.terraform
 
-class SlackNotification {
+class slacknotification {
     // Define a method for Slack notification
     def sendSlackNotification(String buildStatus) {
         def branchName = params.branch ?: 'main'
@@ -42,3 +42,4 @@ class SlackNotification {
         sendSlackNotification(buildStatus)
     }
 }
+
