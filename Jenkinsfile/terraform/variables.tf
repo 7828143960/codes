@@ -1,6 +1,6 @@
 variable "region" {
   description = "The AWS region to deploy resources in"
-  default     = "eu-north-1"
+  default     = "us-east-1"
 }
 
 variable "instance_type" {
@@ -10,11 +10,11 @@ variable "instance_type" {
 
 variable "ami_id" {
   description = "The ID of the AMI to use"
-  default     = "ami-07c8c1b18ca66bb07"
+  default     = "ami-0e86e20dae9224db8"
 }
 
 variable "key_name" {
   description = "Name of the SSH key pair"
   type        = string
-  default     = "navin-key"
+  default     = "navin"
 }
