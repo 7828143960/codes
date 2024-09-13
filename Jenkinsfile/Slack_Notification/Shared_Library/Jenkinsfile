@@ -1,10 +1,33 @@
+// @Library("my-shared-library") _
+
+// def genericCiSlackNotification = new org.avengers.template.genericCi.GenericCiSlackNotification()
+
+// node {
+//    genericCiSlackNotification.call() 
+// }
+
 @Library("my-shared-library") _
 
 def genericCiSlackNotification = new org.avengers.template.genericCi.GenericCiSlackNotification()
 
 node {
-   genericCiSlackNotification.call() 
+    try {
+        stage('Build') {
+            // Your build steps here
+        }
+    } catch (Exception e) {
+        echo "Build failed with exception: ${e.message}"
+        // Set the build status to FAILURE if an exception occurs
+        currentBuild.result = 'FAILURE'
+        throw e // Re-throw the exception to ensure the pipeline fails
+    } finally {
+        // Call the Slack notification with appropriate build status
+        genericCiSlackNotification.call()
+    }
 }
+
+
+
 
 
 
