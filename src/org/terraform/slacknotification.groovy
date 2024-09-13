@@ -1,10 +1,14 @@
 package org.terraform
+
 def call() {
     stage('Slack Notification') {
-        def status = env.BUILD_STATUS ?: 'SUCCESS'
+        // Use currentBuild.currentResult to get the build status
+        def status = currentBuild.currentResult ?: 'SUCCESS'
         def branchName = params.branch ?: 'main'
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
         def message
+
+        // Construct the message based on the build status
         if (status == 'FAILURE') {
             message = """
             Job Build Failed on branch ${branchName} at ${jobStartTime} GMT.
@@ -13,7 +17,12 @@ def call() {
             message = """
             Job Build successfully on branch ${branchName} at ${jobStartTime} GMT.
             """
+        } else {
+            message = """
+            Job Build status is ${status} on branch ${branchName} at ${jobStartTime} GMT.
+            """
         }
+
         // Determine the color based on build status
         def color
         if (status == 'SUCCESS') {
@@ -25,12 +34,13 @@ def call() {
         } else {
             color = "warning"
         }
+
         // Send Slack message
         slackSend channel: 'jenkinss',
             color: color,
             message: """
             ${message}
-            Find Status of Pipeline: ${currentBuild.currentResult}
+            Find Status of Pipeline: ${status}
             Job Name: ${env.JOB_NAME}
             Build Number: ${env.BUILD_NUMBER}
             Build URL: ${env.BUILD_URL}
