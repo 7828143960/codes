@@ -17,6 +17,10 @@ def call() {
             message = """
             Job Build successfully on branch ${branchName} at ${jobStartTime} GMT.
             """
+        } else if (status == 'ABORTED') {
+            message = """
+            Job Build was aborted on branch ${branchName} at ${jobStartTime} GMT.
+            """
         } else {
             message = """
             Job Build status is ${status} on branch ${branchName} at ${jobStartTime} GMT.
