@@ -1,27 +1,3 @@
-// @Library('my-shared-library') _
-// def terraformCI = new org.template.terraform()
-
-// // Define parameters using properties step
-// properties([
-//     [$class: 'ParametersDefinitionProperty', parameterDefinitions: [
-//         [$class: 'StringParameterDefinition', name: 'branch', defaultValue: 'snaatak-Jenkinsfile', description: 'Enter the branch name'],
-//         [$class: 'StringParameterDefinition', name: 'rootPath', defaultValue: 'Jenkinsfile', description: 'Enter the root directory path'],
-//         [$class: 'StringParameterDefinition', name: 'childPath', defaultValue: 'terraform', description: 'Enter the child directory path']
-//     ]]
-// ])
-
-// node {
-//     // Use credentials with the withCredentials step
-//     withCredentials([aws(credentialsId: 'vishal-aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-//         // Directly use parameters
-//         script {
-//             def url = 'https://github.com/7828143960/shreya_private.git'
-//             def creds = 'shreya-github-id'
-//             terraformCI.call(url, creds, params.branch, params.rootPath, params.childPath)
-//         }
-//     }
-// }
-
 @Library('my-shared-library') _
 def terraformCI = new org.template.terraform()
 node {
