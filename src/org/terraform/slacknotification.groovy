@@ -9,7 +9,9 @@ def call() {
         def message
         
         if (status == 'FAILURE') {
-            message = "Job Failed on branch ${branchName} at ${jobStartTime} GMT."
+            message = """
+            Job Build Failed on branch ${branchName} at ${jobStartTime} GMT.
+            """
         } else if (status == 'SUCCESS') {
             message = """
             Job Build successfully on branch ${branchName} at ${jobStartTime} GMT.
