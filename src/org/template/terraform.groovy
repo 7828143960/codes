@@ -30,24 +30,31 @@ def call(String url, String creds, String branch, String rootPath, String childP
     tfapply = new apply()
     notification = new slacknotification()
 
+    // Keep track of whether an exception occurs
+    def aborted = false
+
     try {
         gitcheckout.call(url, creds, branch)
         tfinit.call(rootPath, childPath)
         tfvalidate.call(rootPath, childPath)
         tfapply.call(rootPath, childPath)
-        // Only set SUCCESS if all steps are successful
+        // Set SUCCESS if all steps are successful
         currentBuild.result = 'SUCCESS'
     } catch (Exception e) {
         // Set FAILURE if an exception occurs
-        if (currentBuild.result != 'ABORTED') {
-            currentBuild.result = 'FAILURE'
-        }
+        currentBuild.result = 'FAILURE'
         throw e
     } finally {
-        // Check if the build was aborted and set the result if needed
-        if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
+        // Check if the build was aborted
+        if (currentBuild.result == null || currentBuild.result == 'ABORTED') {
+            aborted = true
             currentBuild.result = 'ABORTED'
         }
+        
+        // Send Slack notification
         notification.call()
+        
+        // Debug output for tracking
+        echo "Build result in finally block: ${currentBuild.result}"
     }
 }
