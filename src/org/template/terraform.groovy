@@ -44,7 +44,10 @@ def call(String url, String creds, String branch, String rootPath, String childP
         }
         throw e
     } finally {
-        // This block will execute whether the build succeeds, fails, or is aborted
+        // Check if the build was aborted and set the result if needed
+        if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
+            currentBuild.result = 'ABORTED'
+        }
         notification.call()
     }
 }
