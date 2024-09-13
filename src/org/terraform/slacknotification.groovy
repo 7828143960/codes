@@ -36,21 +36,3 @@ def call() {
             Build URL: ${env.BUILD_URL}
             """
     }
-
-    // Invoke the Slack notification within a post block
-    post {
-        success {
-            sendSlackNotification('SUCCESS')
-        }
-        failure {
-            sendSlackNotification('FAILURE')
-        }
-        aborted {
-            sendSlackNotification('ABORTED')
-        }
-        always {
-            echo "Slack notification sent!"
-        }
-    }
-}
-
