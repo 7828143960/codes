@@ -6,7 +6,7 @@ node {
         script {
             def url = 'https://github.com/7828143960/shreya_private.git'
             def creds = 'shreya-github-id'
-            def branch  = "terraform-sl"
+            def branch  = "snaatak-Jenkinsfile"
             def rootPath = "Jenkinsfile"
             def childPath = "terraform"
             terraformCI.call(url, creds, branch, rootPath, childPath)
