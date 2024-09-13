@@ -17,7 +17,7 @@ resource "aws_instance" "example" {
 resource "aws_security_group" "example" {
   name        = "example-security-group"
   description = "Allow SSH and HTTP traffic"
-  vpc_id      = "vpc-0c029273d1727e8ea"  # Replace with your VPC ID
+  vpc_id      = "vpc-0c029273d1727e8e"  # Replace with your VPC ID
 
   ingress {
     from_port   = 22
