@@ -33,11 +33,18 @@ def call() {
         } else if (status == 'SUCCESS') {
             message = """
             Job Build successfully on branch ${branchName} at ${jobStartTime} GMT.
-            This job is configured with Terraform shared library and executed successfully.
             """
         }
         
-        slackSend channel: 'heartbeat-system', message: message
+        // Add pipeline status, job name, build number, and build URL
+        slackSend channel: 'heartbeat-system',
+            message: """
+            ${message}
+            Find Status of Pipeline: ${currentBuild.currentResult}
+            Job Name: ${env.JOB_NAME}
+            Build Number: ${env.BUILD_NUMBER}
+            Build URL: ${env.BUILD_URL}
+            """
     }
 }
 
