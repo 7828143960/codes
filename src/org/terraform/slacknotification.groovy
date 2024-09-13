@@ -1,7 +1,7 @@
 package org.terraform
 
-def call() {
-    // Define a function for Slack notification
+class SlackNotification {
+    // Define a method for Slack notification
     def sendSlackNotification(String buildStatus) {
         def branchName = params.branch ?: 'main'
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
@@ -37,7 +37,8 @@ def call() {
             """
     }
 
-    // Call the Slack notification with appropriate build status
-    def buildStatus = currentBuild.result ?: 'SUCCESS' // Default to SUCCESS if no result is set
-    sendSlackNotification(buildStatus)
+    def call() {
+        def buildStatus = currentBuild.result ?: 'SUCCESS' // Default to SUCCESS if no result is set
+        sendSlackNotification(buildStatus)
+    }
 }
