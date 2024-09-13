@@ -23,7 +23,6 @@ def call() {
     stage('Slack Notification') {  
         def status = env.BUILD_STATUS ?: 'SUCCESS' 
         def branchName = params.branch ?: 'main'
-
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
         
         def message
@@ -36,8 +35,21 @@ def call() {
             """
         }
         
-        // Add pipeline status, job name, build number, and build URL
+        // Determine the color based on build status
+        def color
+        if (status == 'SUCCESS') {
+            color = "good"
+        } else if (status == 'FAILURE') {
+            color = "danger"
+        } else if (status == 'ABORTED') {
+            color = "warning"
+        } else {
+            color = "warning"
+        }
+
+        // Send Slack message
         slackSend channel: 'heartbeat-system',
+            color: color,
             message: """
             ${message}
             Find Status of Pipeline: ${currentBuild.currentResult}
