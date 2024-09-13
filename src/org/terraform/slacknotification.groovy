@@ -36,3 +36,8 @@ def call() {
             Build URL: ${env.BUILD_URL}
             """
     }
+
+    // Call the Slack notification with appropriate build status
+    def buildStatus = currentBuild.result ?: 'SUCCESS' // Default to SUCCESS if no result is set
+    sendSlackNotification(buildStatus)
+}
