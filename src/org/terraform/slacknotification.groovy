@@ -1,8 +1,6 @@
 package org.terraform
 def call() {
-    post {
-        always {
-            script {
+    stage('Slack Notification') {
         def status = env.BUILD_STATUS ?: 'SUCCESS'
         def branchName = params.branch ?: 'main'
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
@@ -37,7 +35,5 @@ def call() {
             Build Number: ${env.BUILD_NUMBER}
             Build URL: ${env.BUILD_URL}
             """
-            }
-        }
-    }      
+    }
 }
