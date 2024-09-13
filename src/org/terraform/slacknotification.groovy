@@ -1,46 +1,42 @@
 package org.terraform
 
-class slacknotification {
-    def buildStatus
-
-    // Define a method for Slack notification
-    def sendSlackNotification() {
+def call() {
+    stage('Slack Notification') {  
+        def status = env.BUILD_STATUS ?: 'SUCCESS' 
         def branchName = params.branch ?: 'main'
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
         
-        // Construct the message based on the build status
-        def message = "Job Status: ${buildStatus} on branch ${branchName} at ${jobStartTime} GMT."
-
-        // Determine the Slack message color based on the build status
+        def message
+        
+        if (status == 'FAILURE') {
+            message = "Job Failed on branch ${branchName} at ${jobStartTime} GMT."
+        } else if (status == 'SUCCESS') {
+            message = """
+            Job Build successfully on branch ${branchName} at ${jobStartTime} GMT.
+            """
+        }
+        
+        // Determine the color based on build status
         def color
-        switch (buildStatus) {
-            case 'SUCCESS':
-                color = "good"
-                break
-            case 'FAILURE':
-                color = "danger"
-                break
-            case 'ABORTED':
-                color = "warning"
-                break
-            default:
-                color = "warning"
+        if (status == 'SUCCESS') {
+            color = "good"
+        } else if (status == 'FAILURE') {
+            color = "danger"
+        } else if (status == 'ABORTED') {
+            color = "warning"
+        } else {
+            color = "warning"
         }
 
-        // Send the Slack notification
-        slackSend channel: 'jenkinss', // Ensure the correct Slack channel name
+        // Send Slack message
+        slackSend channel: 'jenkinss',
             color: color,
             message: """
             ${message}
-            Find Status of Pipeline: ${buildStatus}
+            Find Status of Pipeline: ${currentBuild.currentResult}
             Job Name: ${env.JOB_NAME}
             Build Number: ${env.BUILD_NUMBER}
             Build URL: ${env.BUILD_URL}
             """
     }
-
-    def call() {
-        sendSlackNotification()
-    }
 }
-
