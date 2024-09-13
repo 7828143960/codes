@@ -2,7 +2,7 @@ package org.terraform
 
 def call() {
     stage('Slack Notification') {  
-        def status = env.BUILD_STATUS ?: 'FAILURE' 
+        def status = env.BUILD_STATUS ?: 
         def branchName = params.branch ?: 'main'
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
         
