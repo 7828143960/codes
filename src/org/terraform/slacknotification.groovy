@@ -17,26 +17,26 @@ def call() {
         }
         
         // Determine the color based on build status
-//         def color
-//         if (status == 'SUCCESS') {
-//             color = "good"
-//         } else if (status == 'FAILURE') {
-//             color = "danger"
-//         } else if (status == 'ABORTED') {
-//             color = "warning"
-//         } else {
-//             color = "warning"
-//         }
+        def color
+        if (status == 'SUCCESS') {
+            color = "good"
+        } else if (status == 'FAILURE') {
+            color = "danger"
+        } else if (status == 'ABORTED') {
+            color = "warning"
+        } else {
+            color = "warning"
+        }
 
-//         // Send Slack message
-//         slackSend channel: 'jenkinss',
-//             color: color,
-//             message: """
-//             ${message}
-//             Find Status of Pipeline: ${currentBuild.currentResult}
-//             Job Name: ${env.JOB_NAME}
-//             Build Number: ${env.BUILD_NUMBER}
-//             Build URL: ${env.BUILD_URL}
-//             """
+        // Send Slack message
+        slackSend channel: 'jenkinss',
+            color: color,
+            message: """
+            ${message}
+            Find Status of Pipeline: ${currentBuild.currentResult}
+            Job Name: ${env.JOB_NAME}
+            Build Number: ${env.BUILD_NUMBER}
+            Build URL: ${env.BUILD_URL}
+            """
     }
 }
