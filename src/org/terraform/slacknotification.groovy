@@ -48,7 +48,7 @@ def call() {
         }
 
         // Send Slack message
-        slackSend channel: 'heartbeat-system',
+        slackSend channel: 'jenkinss',
             color: color,
             message: """
             ${message}
