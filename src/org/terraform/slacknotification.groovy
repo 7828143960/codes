@@ -43,10 +43,10 @@ def call() {
             message: """
             ${message}
             Find Status of Pipeline: ${status}
+            Build username: ${userName}
             Job Name: ${env.JOB_NAME}
             Build Number: ${env.BUILD_NUMBER}
             Build url: ${env.BUILD_URL}
-            Build username: ${userName}
             """
     }
 }
