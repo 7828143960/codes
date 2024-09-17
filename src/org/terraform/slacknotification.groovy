@@ -5,7 +5,7 @@ def call() {
         def status = currentBuild.currentResult ?: 'SUCCESS'
         def branchName = params.branch ?: 'main'
         def userName = env.BUILD_USER ? env.BUILD_USER : 'User'
-        def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
+        def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('Asia/Kolkata'))
         def message
         
         if (status == 'FAILURE') {
