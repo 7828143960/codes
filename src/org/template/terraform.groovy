@@ -22,12 +22,6 @@ def call(String url, String creds, String branch, String rootPath, String childP
         currentBuild.result = 'FAILURE'
         throw e
     } finally {
-        notification.call([
-            MESSAGE: "Build ${currentBuild.result} for branch ${branch}",
-            CHANNEL: "jenkinss",
-            DOMAIN: "demoworkspace-6868926",
-            TOKEN_ID: "slack"
-        ])
+        notification.call()
     }
 }
-
