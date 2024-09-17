@@ -50,8 +50,8 @@ def call() {
             Build URL: ${env.BUILD_URL}
             BUILD_USER: ${env.BUILD_USER}
             CHANNEL: ${stepParams.CHANNEL}
-	        DOMAIN: ${stepParams.DOMAIN}
-	        TOKEN_ID: ${stepParams.TOKEN_ID}
+	    DOMAIN: ${stepParams.DOMAIN}
+	    TOKEN_ID: ${stepParams.TOKEN_ID}
             """
     }
 }
