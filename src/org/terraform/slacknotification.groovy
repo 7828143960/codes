@@ -10,19 +10,19 @@ def call() {
         
         if (status == 'FAILURE') {
             message = """
-            Job Build Failed on branch ${branchName} at ${jobStartTime} GMT.
+            Job Build Failed on branch ${branchName} at ${jobStartTime} IST.
             """
         } else if (status == 'SUCCESS') {
             message = """
-            Job Build successfully on branch ${branchName} at ${jobStartTime} GMT.
+            Job Build successfully on branch ${branchName} at ${jobStartTime} IST.
             """
         } else if (status == 'ABORTED') {
             message = """
-            Job Build was aborted on branch ${branchName} at ${jobStartTime} GMT.
+            Job Build was aborted on branch ${branchName} at ${jobStartTime} IST.
             """
         } else {
             message = """
-            Job Build status is ${status} on branch ${branchName} at ${jobStartTime} GMT.
+            Job Build status is ${status} on branch ${branchName} at ${jobStartTime} IST.
             """
         }
 
