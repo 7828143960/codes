@@ -46,7 +46,7 @@ def call() {
             Job Name: ${env.JOB_NAME}
             Build Number: ${env.BUILD_NUMBER}
             Build URL: ${env.BUILD_URL}
-            BUILD USER: ${env.BUILD_USER_ID}
+            BUILD_USER: ${env.BUILD_USER}
             """
     }
 }
