@@ -61,11 +61,7 @@ def call() {
         def message
 
         // Retrieve build user information
-        def userName = 'Unknown User'
-        def buildCause = currentBuild.rawBuild.getCause(hudson.model.Cause.UserIdCause)
-        if (buildCause) {
-            userName = buildCause.getUserName() ?: 'Unknown User'
-        }
+        def userName = env.BUILD_USER ? env.BUILD_USER : 'Unknown User'
 
         // Construct the message based on the build status
         if (status == 'FAILURE') {
