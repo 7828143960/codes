@@ -2,7 +2,6 @@ package org.terraform
 
 def call(Map stepParams) {
     stage('Slack Notification') {
-        // Use currentBuild.currentResult to get the build status
         def status = currentBuild.currentResult ?: 'SUCCESS'
         def branchName = params.branch ?: 'main'
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('GMT'))
