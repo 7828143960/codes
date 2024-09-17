@@ -1,6 +1,6 @@
 package org.terraform
 
-def call(Map stepParams) {
+def call() {
     stage('Slack Notification') {
         def status = currentBuild.currentResult ?: 'SUCCESS'
         def branchName = params.branch ?: 'main'
@@ -38,7 +38,7 @@ def call(Map stepParams) {
             color = "warning"
         }
 
-        slackSend channel: stepParams.CHANNEL,
+        slackSend channel: 'jenkinss',
             color: color,
             message: """
             ${message}
