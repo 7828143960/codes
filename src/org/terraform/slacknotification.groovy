@@ -38,7 +38,6 @@ def call(Map stepParams) {
             color = "warning"
         }
 
-        // Send Slack message
         slackSend channel: stepParams.CHANNEL,
             color: color,
             message: """
@@ -54,4 +53,3 @@ def call(Map stepParams) {
             """
     }
 }
-
