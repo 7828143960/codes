@@ -52,7 +52,6 @@ def call(String url, String creds, String branch, String rootPath, String childP
     } finally {
         // Pass the parameters for the Slack notification
         notification.call([
-            MESSAGE: "Build completed with status: ${currentBuild.result}",
             CHANNEL: "jenkinss",
             DOMAIN: "demoworkspace-6868926",
             TOKEN_ID: "slack"
