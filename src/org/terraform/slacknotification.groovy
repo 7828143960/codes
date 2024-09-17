@@ -61,7 +61,7 @@ def call() {
         def message
 
         // Retrieve build user information
-        def userName = env.BUILD_USER ? env.BUILD_USER : 'Unknown User'
+        def userName = env.BUILD_USER ? env.BUILD_USER : ''
 
         // Construct the message based on the build status
         if (status == 'FAILURE') {
