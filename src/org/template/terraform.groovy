@@ -22,7 +22,6 @@ def call(String url, String creds, String branch, String rootPath, String childP
         currentBuild.result = 'FAILURE'
         throw e
     } finally {
-        // Ensure the notification is called with required parameters
         notification.call([
             MESSAGE: "Build ${currentBuild.result} for branch ${branch}",
             CHANNEL: "jenkinss",
