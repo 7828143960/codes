@@ -61,7 +61,7 @@ def call() {
         def message
 
         // Retrieve build user information
-        def userName = env.BUILD_USER ? env.BUILD_USER : ''
+       // def userName = env.BUILD_USER ? env.BUILD_USER : ''
 
         // Construct the message based on the build status
         if (status == 'FAILURE') {
@@ -102,7 +102,8 @@ def call() {
             Job Name: ${env.JOB_NAME}
             Build Number: ${env.BUILD_NUMBER}
             Build URL: ${env.BUILD_URL}
-            BUILD_USER: ${userName}
+           // BUILD_USER: ${userName}
+            BUILD_USER: ${env.BUILD_USER}
             """
     }
 }
