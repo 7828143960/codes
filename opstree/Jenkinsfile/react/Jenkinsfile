@@ -1,4 +1,4 @@
-@Library('my-shared-lib') _
+@Library('my-shared-library') _
 
 def cipipeline = new opstree.ci.templates.react_ci.react_ci()
 node {
