@@ -16,15 +16,15 @@ node {
     clean_when_build_unstable: true,
 
     // VCS MANAGEMENT 
-    repo_https_url: "https://github.com/your/repo.git", // Replace with your repository URL
-    repo_ssh_url: "git@github.com:your/repo.git", // Replace with your SSH repository URL
-    repo_branch: "main", // Change to the branch you want to build
+    repo_https_url: "https://github.com/7828143960/codes.git", // Replace with your repository URL
+    repo_ssh_url: "git@github.com:7828143960/codes.git", // Replace with your SSH repository URL
+    repo_branch: "stablemoney_ci_testing", // Change to the branch you want to build
     repo_url_type: "http", // or "ssh" based on your preference
-    jenkins_git_creds_id: "your-jenkins-git-creds-id", // Replace with your Git credentials ID
-    source_code_path: "/path/to/source", // Adjust the source code path as necessary
+    jenkins_git_creds_id: "shreya-github-id", // Replace with your Git credentials ID
+    source_code_path: "test-react-app", // Adjust the source code path as necessary
 
     // Dependency Scanning
-    dependency_check: true,
+    dependency_check: false,
     dependency_scan_tool: "owasp", // Assuming you want to use OWASP for dependency checking
     owasp_project_name: "owasp-react", // Custom name for the OWASP project
     owasp_report_publish: true,
@@ -32,7 +32,7 @@ node {
     fail_job_if_dependency_returned_exception: true,
 
     // Creds Scanning
-    gitleaks_check: true,
+    gitleaks_check: false,
     fail_job_if_leak_detected: false,
     gitleaks_report_format: "json",
     gitleaks_report_jenkins_publish: true,
@@ -40,26 +40,26 @@ node {
     // Build Configuration
     perform_code_build: true,
     build_tool: "npm", // Set the build tool to npm for React
-    npm_command: "install && run build", // Commands to run for building
+   // npm_command: "install && run build", // Commands to run for building
 
     // Unit Testing
-    unit_testing_check: true,
+    unit_testing_check: false,
     fail_job_if_unit_issue_detected: false,
     unit_test_reports_path: "*/test-results/*.json", // Adjust this based on your test report format
 
     // Static Code Analysis
     codebase_to_scan_directory: "**",
-    static_code_analysis_check: true,
+    static_code_analysis_check: false,
     path_to_sonar_properties: "sonar-project.properties", // Specify the path for SonarQube properties
 
     // Build Dockerfile
-    perform_build_dockerfile: true,
+    perform_build_dockerfile: false,
     image_name: "react-app", // Change to your desired image name
     dockerfile_location: "/path/to/Dockerfile", // Adjust the path to your Dockerfile
     dockerfile_context: ".", // Adjust if your Docker context is different
 
     // Publish Artifact (Docker Image)
-    artifact_publish_check: true,
+    artifact_publish_check: false,
     artifact_destination_type: "ecr", // or another destination type as needed
     jenkins_aws_credentials_id: "aws-credentials-id", // Replace with your AWS credentials ID
     docker_image_name: "react-app",
@@ -68,7 +68,7 @@ node {
     account_id: "your-account-id", // Replace with your AWS account ID
 
     // Notification
-    notification_enabled: true,
+    notification_enabled: false,
     notification_channel: "teams", // or other channels as needed
     webhook_url_creds_id: "teams_webhook" // Replace with your webhook credentials ID
   ])
