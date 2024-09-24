@@ -1,0 +1,76 @@
+@Library('my-shared-lib') _
+
+def cipipeline = new opstree.react.react_ci() 
+node {
+  
+  cipipeline.call([
+
+    // WORKSPACE MANAGEMENT
+    clean_workspace: true,
+    ignore_clean_workspace_failure: false,
+    delete_dirs: false,
+    clean_when_build_aborted: true, 
+    clean_when_build_failed: true,
+    clean_when_not_built: true,
+    clean_when_build_succeed: true,
+    clean_when_build_unstable: true,
+
+    // VCS MANAGEMENT 
+    repo_https_url: "https://github.com/your/repo.git", // Replace with your repository URL
+    repo_ssh_url: "git@github.com:your/repo.git", // Replace with your SSH repository URL
+    repo_branch: "main", // Change to the branch you want to build
+    repo_url_type: "http", // or "ssh" based on your preference
+    jenkins_git_creds_id: "your-jenkins-git-creds-id", // Replace with your Git credentials ID
+    source_code_path: "/path/to/source", // Adjust the source code path as necessary
+
+    // Dependency Scanning
+    dependency_check: true,
+    dependency_scan_tool: "owasp", // Assuming you want to use OWASP for dependency checking
+    owasp_project_name: "owasp-react", // Custom name for the OWASP project
+    owasp_report_publish: true,
+    owasp_report_format: "html",
+    fail_job_if_dependency_returned_exception: true,
+
+    // Creds Scanning
+    gitleaks_check: true,
+    fail_job_if_leak_detected: false,
+    gitleaks_report_format: "json",
+    gitleaks_report_jenkins_publish: true,
+
+    // Build Configuration
+    perform_code_build: true,
+    build_tool: "npm", // Set the build tool to npm for React
+    npm_command: "install && run build", // Commands to run for building
+
+    // Unit Testing
+    unit_testing_check: true,
+    fail_job_if_unit_issue_detected: false,
+    unit_test_reports_path: "*/test-results/*.json", // Adjust this based on your test report format
+
+    // Static Code Analysis
+    codebase_to_scan_directory: "**",
+    static_code_analysis_check: true,
+    path_to_sonar_properties: "sonar-project.properties", // Specify the path for SonarQube properties
+
+    // Build Dockerfile
+    perform_build_dockerfile: true,
+    image_name: "react-app", // Change to your desired image name
+    dockerfile_location: "/path/to/Dockerfile", // Adjust the path to your Dockerfile
+    dockerfile_context: ".", // Adjust if your Docker context is different
+
+    // Publish Artifact (Docker Image)
+    artifact_publish_check: true,
+    artifact_destination_type: "ecr", // or another destination type as needed
+    jenkins_aws_credentials_id: "aws-credentials-id", // Replace with your AWS credentials ID
+    docker_image_name: "react-app",
+    ecr_repo_name: "react-app-repo", // Adjust based on your repository name
+    ecr_region: "us-east-1", // Change to your preferred region
+    account_id: "your-account-id", // Replace with your AWS account ID
+
+    // Notification
+    notification_enabled: true,
+    notification_channel: "teams", // or other channels as needed
+    webhook_url_creds_id: "teams_webhook" // Replace with your webhook credentials ID
+  ])
+
+}
