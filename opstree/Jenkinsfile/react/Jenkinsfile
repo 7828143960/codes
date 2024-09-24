@@ -1,6 +1,6 @@
 @Library('my-shared-lib') _
 
-def cipipeline = new opstree.react.react_ci() 
+def cipipeline = new opstree.ci.templates.react_ci.react_ci()
 node {
   
   cipipeline.call([
