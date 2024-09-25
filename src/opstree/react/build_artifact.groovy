@@ -24,7 +24,7 @@ def build_artifact(Map step_params) {
     repo_dir = parser.fetch_git_repo_name('repo_url':"${repo_url}")
 
     dir("${WORKSPACE}/codes/test-react-app") {
-        sh """ docker run --rm -v ~/.node_modules:/app/node_modules -v ${WORKSPACE}/codes/test-react-app:/app/ -w /app node:14.21.3 sh -c " npm install && npm run build " """
+        sh """ docker run --rm -v ~/.node_modules:/app/node_modules -v ${WORKSPACE}/codes/test-react-app:/app/ -w /app node:18 sh -c "yarn install && yarn build" """
         logger.logger('msg':'Build successful', 'level':'INFO')
     }
 }
