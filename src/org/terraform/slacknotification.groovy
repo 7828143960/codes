@@ -59,7 +59,7 @@ def call(step_params) {
         def status = currentBuild.currentResult ?: 'SUCCESS'
         def branchName = params.branch ?: 'main'
         def userName = env.BUILD_USER ? env.BUILD_USER : 'User'
-        def channel_name = step_params?.channel_name ?: '#general' 
+        def channel_name = step_params?.channel_name ?: '' 
         def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('Asia/Kolkata'))
         def message
         
