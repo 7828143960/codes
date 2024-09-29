@@ -39,9 +39,9 @@ node {
 
     // Build Configuration
     perform_code_build: true,
-    build_tool: "yarn", // Set the build tool to npm for React
-   // npm_command: "install && run build", // Commands to run for building
-
+    // build_tool: "yarn", // Set the build tool to npm for React
+    package_manager: "yarn",
+  
     // Unit Testing
     unit_testing_check: false,
     fail_job_if_unit_issue_detected: false,
