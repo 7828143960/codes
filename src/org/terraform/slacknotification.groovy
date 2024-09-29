@@ -51,7 +51,7 @@
 //     }
 // }
 
-package opstree.terraform
+package org.terraform
 
 def call(step_params) {
     stage('Slack Notification') {
