@@ -20,11 +20,19 @@ def build_artifact(Map step_params) {
 
     repo_url = "${step_params.repo_url}"
     source_code_path = "${step_params.source_code_path}"
+    package_manager = step_params.package_manager ?: 'yarn'
 
     repo_dir = parser.fetch_git_repo_name('repo_url':"${repo_url}")
 
     dir("${WORKSPACE}/${repo_dir}") {
-            sh """ docker run  --rm -v ~/.node_modules:/app/node_modules -v ${WORKSPACE}/${repo_dir}:/app/ -w /app node:20 sh -c "yarn install && yarn build" """
-            logger.logger('msg':'Build successful', 'level':'INFO')
+        def build_command
+        if (package_manager == 'npm') {
+            build_command = "npm install && npm run build"
+        } else {
+            build_command = "yarn install && yarn build"
+        }
+
+        sh """ docker run --rm -v ~/.node_modules:/app/node_modules -v ${WORKSPACE}/${repo_dir}:/app/ -w /app node:20 sh -c "${build_command}" """
+        logger.logger('msg':'Build successful', 'level':'INFO')
     }
 }
