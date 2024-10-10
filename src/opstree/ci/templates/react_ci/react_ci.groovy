@@ -219,32 +219,32 @@ def call(Map step_params) {
                 }
      try {
         currentBuild.result = 'SUCCESS'
-        if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
+        if (step_params.slack_notification_enabled != null && step_params.slack_notification_enabled.toBoolean()) {
                 slacknotification.slack_notification_factory(
                         build_status: 'SUCCESS',
                         slack_channel: "${step_params.slack_channel}",
-                        notification_enabled: "${step_params.notification_enabled}"
+                        slack_notification_enabled: "${step_params.slack_notification_enabled}"
 
                     )
             }
     } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
         currentBuild.result = 'ABORTED'
-        if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
+        if (step_params.slack_notification_enabled != null && step_params.slack_notification_enabled.toBoolean()) {
                 slacknotification.slack_notification_factory(
                         build_status: 'ABORTED',
                         slack_channel: "${step_params.slack_channel}",
-                        notification_enabled: "${step_params.notification_enabled}"
+                        slack_notification_enabled: "${step_params.slack_notification_enabled}"
 
                     )
             }
         throw e
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
-        if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
+        if (step_params.slack_notification_enabled != null && step_params.slack_notification_enabled.toBoolean()) {
                 slacknotification.slack_notification_factory(
                         build_status: 'FAILURE',
                         slack_channel: "${step_params.slack_channel}",
-                        notification_enabled: "${step_params.notification_enabled}"
+                        slack_notification_enabled: "${step_params.slack_notification_enabled}"
 
                     )
             }
