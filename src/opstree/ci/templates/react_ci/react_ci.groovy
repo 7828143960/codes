@@ -219,27 +219,24 @@ def call(Map step_params) {
                         }
                 }
 try {
-    // Your stages here...
-    currentBuild.result = 'SUCCESS'  // Set the initial result to SUCCESS
+    currentBuild.result = 'SUCCESS' 
 
 } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
-    currentBuild.result = 'ABORTED'  // Handle interrupted builds
+    currentBuild.result = 'ABORTED'  
     throw e
 } catch (Exception e) {
-    currentBuild.result = 'FAILURE'  // Handle any other exceptions
+    currentBuild.result = 'FAILURE'
     throw e
 } finally {
-    // Ensure final notification sends the correct status
-    if (step_params.slack_notification_enabled?.toBoolean()) {
-       // stage('Slack Notification') {
-            // Send notification based on the final build result
+    if (step_params.slack_notification_enabled != null && step_params.slack_notification_enabled.toBoolean()) {
             notification.slack_notification_factory(
                 build_status: currentBuild.result, 
                 slack_channel: "${step_params.slack_channel}",
                 slack_notification_enabled: "${step_params.slack_notification_enabled}"
             )
         }
-    }      
+    } 
+            
 if (step_params.clean_workspace != null && step_params.clean_workspace.toBoolean()) {
                         workspace.workspace_management(
                                 clean_workspace: "${step_params.clean_workspace}",
