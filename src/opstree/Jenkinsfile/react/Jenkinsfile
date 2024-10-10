@@ -70,11 +70,11 @@ node {
     // Notification
     notification_enabled: false,
     notification_channel: "teams", // or other channels as needed
-    webhook_url_creds_id: "teams_webhook" // Replace with your webhook credentials ID
+    webhook_url_creds_id: "teams_webhook", // Replace with your webhook credentials ID
 
     // Slack Notification
     notification_enabled: true,
-    slack_channel: "jenkinss",
+    slack_channel: "jenkinss"
   ])
 
 }
