@@ -231,14 +231,15 @@ try {
 } finally {
     // Ensure final notification sends the correct status
     if (step_params.slack_notification_enabled?.toBoolean()) {
-        // Send notification based on the final build result
-        notification.slack_notification_factory(
-            build_status: currentBuild.result, 
-            slack_channel: "${step_params.slack_channel}",
-            slack_notification_enabled: "${step_params.slack_notification_enabled}"
-        )
-    }
-            
+        stage('Slack Notification') {
+            // Send notification based on the final build result
+            notification.slack_notification_factory(
+                build_status: currentBuild.result, 
+                slack_channel: "${step_params.slack_channel}",
+                slack_notification_enabled: "${step_params.slack_notification_enabled}"
+            )
+        }
+    }      
 if (step_params.clean_workspace != null && step_params.clean_workspace.toBoolean()) {
                         workspace.workspace_management(
                                 clean_workspace: "${step_params.clean_workspace}",
