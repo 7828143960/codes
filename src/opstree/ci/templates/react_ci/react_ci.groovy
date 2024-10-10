@@ -231,7 +231,7 @@ try {
 } finally {
     // Ensure final notification sends the correct status
     if (step_params.slack_notification_enabled?.toBoolean()) {
-        stage('Slack Notification') {
+       // stage('Slack Notification') {
             // Send notification based on the final build result
             notification.slack_notification_factory(
                 build_status: currentBuild.result, 
