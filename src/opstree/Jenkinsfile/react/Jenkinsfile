@@ -73,7 +73,7 @@ node {
     webhook_url_creds_id: "teams_webhook", // Replace with your webhook credentials ID
 
     // Slack Notification
-    notification_enabled: true,
+    slack_notification_enabled: true,
     slack_channel: "jenkinss"
   ])
 
