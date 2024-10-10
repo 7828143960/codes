@@ -192,27 +192,80 @@ def call(Map step_params) {
                 echo 'Skipping Publish Artifact stage as it is disabled.'
             }
         } catch (Exception e) {
+            // Handle any exception or failure scenario
             currentBuild.result = 'FAILURE'
-            if (step_params.notification_enabled.toBoolean()) {
+            if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
                 notify.notification_factory(
-                    build_status: 'FAILURE',
-                    notify_channel: "${step_params.notify_channel}",
-                    notify_tool: "${step_params.notify_tool}",
-                    notify_tool_type: "${step_params.notify_tool_type}",
-                    notify_channel_creds_id: "${step_params.notify_channel_creds_id}"
-                )
+                        build_status: 'Failure',
+                        webhook_url_creds_id: "${step_params.webhook_url_creds_id}",
+                        notification_channel: "${step_params.notification_channel}",
+                        notification_enabled: "${step_params.notification_enabled}"
+
+                    )
             }
             throw e
         } finally {
-            if (step_params.notification_enabled.toBoolean()) {
-                notify.notification_factory(
-                    build_status: currentBuild.result,
-                    notify_channel: "${step_params.notify_channel}",
-                    notify_tool: "${step_params.notify_tool}",
-                    notify_tool_type: "${step_params.notify_tool_type}",
-                    notify_channel_creds_id: "${step_params.notify_channel_creds_id}"
-                )
+                // This block will always execute
+                if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
+                        if (currentBuild.currentResult == 'SUCCESS') {
+                    notify.notification_factory(
+                                        build_status: 'Success',
+                                        webhook_url_creds_id: "${step_params.webhook_url_creds_id}",
+                                        notification_channel: "${step_params.notification_channel}",
+                                        notification_enabled: "${step_params.notification_enabled}"
+
+                                        )
+                        }
+                }
+     try {
+        currentBuild.result = 'SUCCESS'
+        if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
+                slacknotification.slack_notification_factory(
+                        build_status: 'SUCCESS',
+                        slack_channel: "${step_params.slack_channel}",
+                        notification_enabled: "${step_params.notification_enabled}"
+
+                    )
             }
+    } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
+        currentBuild.result = 'ABORTED'
+        if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
+                slacknotification.slack_notification_factory(
+                        build_status: 'ABORTED',
+                        slack_channel: "${step_params.slack_channel}",
+                        notification_enabled: "${step_params.notification_enabled}"
+
+                    )
+            }
+        throw e
+    } catch (Exception e) {
+        currentBuild.result = 'FAILURE'
+        if (step_params.notification_enabled != null && step_params.notification_enabled.toBoolean()) {
+                slacknotification.slack_notification_factory(
+                        build_status: 'FAILURE',
+                        slack_channel: "${step_params.slack_channel}",
+                        notification_enabled: "${step_params.notification_enabled}"
+
+                    )
+            }
+        throw e
+    } finally {
+        notification.call()  
+    }
+
+if (step_params.clean_workspace != null && step_params.clean_workspace.toBoolean()) {
+                        workspace.workspace_management(
+                                clean_workspace: "${step_params.clean_workspace}",
+                                ignore_clean_workspace_failure: "${step_params.ignore_clean_workspace_failure}",
+                                delete_dirs: "${step_params.delete_dirs}",
+                                clean_when_build_aborted: "${step_params.clean_when_build_aborted}",
+                                clean_when_build_failed: "${step_params.clean_when_build_failed}",
+                                clean_when_not_built: "${step_params.clean_when_not_built}",
+                                clean_when_build_succeed: "${step_params.clean_when_build_succeed}",
+                                clean_when_build_unstable: "${step_params.clean_when_build_unstable}"
+                        )
+        }
+                
+        }
         }
     }
-}
