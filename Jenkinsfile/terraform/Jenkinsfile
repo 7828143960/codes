@@ -4,7 +4,7 @@ node {
    // withAWS(roleAccount: '686255949108', role: 'JenkinsAssumeRole', roleSessionName: 'jenkins-session') {
     withCredentials([aws(credentialsId: 'vishal-aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {   
         script {
-            def url = 'https://github.com/7828143960/shreya_private.git'
+            def url = 'https://github.com/7828143960/codes.git'
             def creds = 'shreya-github-id'
             def branch  = "snaatak-Jenkinsfile"
             def rootPath = "Jenkinsfile"
