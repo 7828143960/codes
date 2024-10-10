@@ -251,7 +251,7 @@ def call(Map step_params) {
             }
         throw e
     } finally {
-        slacknotification.call()  
+        notification.call()  
     }
 
 if (step_params.clean_workspace != null && step_params.clean_workspace.toBoolean()) {
