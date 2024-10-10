@@ -19,7 +19,7 @@ def slack_notification(Map step_params) {
     build_status =  "${step_params.build_status}"
     slack_channel = "${step_params.slack_channel}" 
 
-    if (slack_channel == 'heartbeat system') {
+    if (slack_channel == 'jenkinss') {
         stage('Slack Notification') {
             def branchName = params.branch ?: 'main'
             def userName = "Started by user ${env.BUILD_USER}."
