@@ -21,7 +21,7 @@ node {
     repo_branch: "stablemoney_ci_testing", // Change to the branch you want to build
     repo_url_type: "http", // or "ssh" based on your preference
     jenkins_git_creds_id: "shreya-github-id", // Replace with your Git credentials ID
-    source_code_path: "/test-react-app", // Adjust the source code path as necessary
+    source_code_path: "/test-react-ap", // Adjust the source code path as necessary
 
     // Dependency Scanning
     dependency_check: false,
