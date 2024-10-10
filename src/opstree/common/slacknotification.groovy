@@ -4,7 +4,7 @@ import opstree.common.*
 
 def slack_notification_factory(Map step_params) {
     logger = new logger()
-    if (step_params.notification_enabled == 'true') {
+    if (step_params.slack_notification_enabled == 'true') {
         slack_notification(step_params)
     } else {
         logger.logger('msg': 'No valid option selected for Notification. Please mention correct values.', 'level': 'WARN')
