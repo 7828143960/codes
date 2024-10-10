@@ -38,7 +38,7 @@ node {
     gitleaks_report_jenkins_publish: true,
 
     // Build Configuration
-    perform_code_build: true,
+    perform_code_build: false,
     // build_tool: "yarn", // Set the build tool to npm for React
     package_manager: "yarn",
   
@@ -73,7 +73,7 @@ node {
     webhook_url_creds_id: "teams_webhook" // Replace with your webhook credentials ID
 
     // Slack Notification
-    notification_enabled: false,
+    notification_enabled: true,
     slack_channel: "jenkinss",
   ])
 
