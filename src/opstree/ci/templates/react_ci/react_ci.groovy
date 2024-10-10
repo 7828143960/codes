@@ -218,18 +218,13 @@ def call(Map step_params) {
                                         )
                         }
                 }
-     try {
+    try {
     // Assuming some operations that may succeed or fail
     currentBuild.result = 'SUCCESS'
     
-    // Send Slack notification if enabled
-    if (step_params.slack_notification_enabled?.toBoolean()) {
-        notification.slack_notification_factory(
-            build_status: currentBuild.result,
-            slack_channel: "${step_params.slack_channel}",
-            slack_notification_enabled: "${step_params.slack_notification_enabled}"
-        )
-    }
+    // Your other operations here
+    // For example: terraformCI.call(step_params)
+
 } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
     currentBuild.result = 'ABORTED'
     throw e
@@ -238,14 +233,16 @@ def call(Map step_params) {
     throw e
 } finally {
     // Ensure final notification sends the correct status
-    notification.slack_notification_factory(
-        build_status: currentBuild.result,
-        slack_channel: "${step_params.slack_channel}",
-        slack_notification_enabled: "${step_params.slack_notification_enabled}"
-    )
-    notification.call()  // Ensure this is defined correctly
+    if (step_params.slack_notification_enabled?.toBoolean()) {
+        notification.slack_notification_factory(
+            build_status: currentBuild.result,
+            slack_channel: "${step_params.slack_channel}",
+            slack_notification_enabled: "${step_params.slack_notification_enabled}"
+        )
+    }
+    notification.call()  
 }
-
+            
 if (step_params.clean_workspace != null && step_params.clean_workspace.toBoolean()) {
                         workspace.workspace_management(
                                 clean_workspace: "${step_params.clean_workspace}",
