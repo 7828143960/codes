@@ -255,3 +255,4 @@ if (step_params.clean_workspace != null && step_params.clean_workspace.toBoolean
         }
         }
     }
+}
