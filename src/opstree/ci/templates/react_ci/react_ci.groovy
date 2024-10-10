@@ -17,7 +17,7 @@ def call(Map step_params) {
         image_size_validator = new image_size_validator()
         notify = new notify()
         build = new build_artifact()
-        slacknotification = new slacknotification()
+        notification = new slacknotification()
 
         if (step_params.repo_url_type == 'http') {
             repo_url = "${step_params.repo_https_url}"
