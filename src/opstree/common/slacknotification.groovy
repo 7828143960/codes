@@ -22,7 +22,7 @@ def slack_notification(Map step_params) {
     if (slack_channel == 'jenkinss') {
         stage('Slack Notification') {
             def branchName = params.branch ?: 'main'
-            def userName = "Started by user ${env.BUILD_USER}."
+            def userName = "${env.BUILD_USER}."
             def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('Asia/Kolkata'))
             def message 
 
