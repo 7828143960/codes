@@ -1,7 +1,7 @@
 package opstree.ci.templates.react_ci
 
 import opstree.common.*
-import opstree.react.*
+import opstree.reac.*
 
 def call(Map step_params) {
     ansiColor('xterm') {
