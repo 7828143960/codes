@@ -16,8 +16,8 @@ node {
     clean_when_build_unstable: true,
 
     // VCS MANAGEMENT 
-    repo_https_url: "https://github.com/7828143960/codes.gi", // Replace with your repository URL
-    repo_ssh_url: "git@github.com:7828143960/codes.gi", // Replace with your SSH repository URL
+    repo_https_url: "https://github.com/7828143960/codes.git", // Replace with your repository URL
+    repo_ssh_url: "git@github.com:7828143960/codes.git", // Replace with your SSH repository URL
     repo_branch: "stablemoney_ci_testing", // Change to the branch you want to build
     repo_url_type: "http", // or "ssh" based on your preference
     jenkins_git_creds_id: "shreya-github-id", // Replace with your Git credentials ID
