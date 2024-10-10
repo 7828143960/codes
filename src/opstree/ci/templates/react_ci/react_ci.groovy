@@ -219,9 +219,7 @@ def call(Map step_params) {
                         }
                 }
 try {
-    // Your pipeline logic here
-    currentBuild.result = 'SUCCESS'  // Assume operations succeed
-    // Example operation: terraformCI.call(step_params)
+    currentBuild.result = 'SUCCESS'  
 
 } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
     currentBuild.result = 'ABORTED'
@@ -233,7 +231,7 @@ try {
     // Ensure final notification sends the correct status
     if (step_params.slack_notification_enabled?.toBoolean()) {
         notification.slack_notification_factory(
-            build_status: currentBuild.result, // Reflect the final result
+            build_status: currentBuild.result, 
             slack_channel: "${step_params.slack_channel}",
             slack_notification_enabled: "${step_params.slack_notification_enabled}"
         )
