@@ -74,7 +74,7 @@ node {
 
     // Slack Notification
     slack_notification_enabled: true,
-    slack_channel: ""
+    slack_channel: "jenkinss"
   ])
 
 }
