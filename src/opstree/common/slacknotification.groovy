@@ -20,7 +20,6 @@ def slack_notification(Map step_params) {
     slack_channel = "${step_params.slack_channel}" 
 
     if (slack_channel == 'jenkinss') {
-        stage('Slack Notification') {
             def branchName = params.branch ?: 'main'
             def userName = "${env.BUILD_USER}."
             def jobStartTime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('Asia/Kolkata'))
@@ -70,4 +69,3 @@ def slack_notification(Map step_params) {
     } else {
         logger.logger('msg': 'No valid notification channel selected', 'level': 'WARN')
     }
-}
