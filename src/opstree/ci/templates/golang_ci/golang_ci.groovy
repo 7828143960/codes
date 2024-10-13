@@ -229,13 +229,15 @@ try {
     throw e
 } finally {
     if (step_params.slack_notification_enabled != null && step_params.slack_notification_enabled.toBoolean()) {
+         stage('Publish Artifact') {
             notification.slack_notification_factory(
                 build_status: currentBuild.result, 
                 slack_channel: "${step_params.slack_channel}",
                 slack_notification_enabled: "${step_params.slack_notification_enabled}"
             )
         }
-    } 
+    }
+}
             
 if (step_params.clean_workspace != null && step_params.clean_workspace.toBoolean()) {
                         workspace.workspace_management(
