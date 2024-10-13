@@ -229,7 +229,7 @@ try {
     throw e
 } finally {
     if (step_params.slack_notification_enabled != null && step_params.slack_notification_enabled.toBoolean()) {
-         stage('Publish Artifact') {
+         stage('Slack Notification') {
             notification.slack_notification_factory(
                 build_status: currentBuild.result, 
                 slack_channel: "${step_params.slack_channel}",
