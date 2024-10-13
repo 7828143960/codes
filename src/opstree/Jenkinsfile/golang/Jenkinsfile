@@ -1,0 +1,77 @@
+@Library('my-shared-library') _
+
+def cipipeline = new opstree.ci.templates.golang_ci.golang_ci()
+node {
+  
+  cipipeline.call([
+
+    // WORKSPACE MANAGEMENT
+    clean_workspace: true,
+    ignore_clean_workspace_failure: false,
+    delete_dirs: false,
+    clean_when_build_aborted: true, 
+    clean_when_build_failed: true,
+    clean_when_not_built: true,
+    clean_when_build_succeed: true,
+    clean_when_build_unstable: true,
+
+    // VCS MANAGEMENT 
+    repo_https_url: https://github.com/7828143960/codes.git", // Replace with your Go repository URL
+    repo_ssh_url: "git@github.com:7828143960/codes.git", // Replace with your SSH repository URL
+    repo_branch: "stablemoney_ci_testing", // Change to the branch you want to build
+    repo_url_type: "http", // or "ssh" based on your preference
+    jenkins_git_creds_id: "shreya-github-id", // Replace with your Git credentials ID
+    source_code_path: "/go-app", // Adjust the source code path as necessary
+
+    // Dependency Scanning
+    dependency_check: false,
+    dependency_scan_tool: "owasp", 
+    owasp_project_name: "owasp-golang", 
+    owasp_report_publish: true,
+    owasp_report_format: "html",
+    fail_job_if_dependency_returned_exception: true,
+
+    // Creds Scanning
+    gitleaks_check: false,
+    fail_job_if_leak_detected: false,
+    gitleaks_report_format: "json",
+    gitleaks_report_jenkins_publish: true,
+
+    // Build Configuration
+    perform_code_build: true,
+    output_binary: "go-app-binary", // Adjust output binary name
+
+    // Unit Testing
+    unit_testing_check: false,
+    fail_job_if_unit_issue_detected: false,
+    unit_test_reports_path: "*/test-results/*.json", 
+
+    // Static Code Analysis
+    codebase_to_scan_directory: "**",
+    static_code_analysis_check: false,
+    path_to_sonar_properties: "sonar-project.properties",
+
+    // Build Dockerfile
+    perform_build_dockerfile: false,
+    image_name: "go-app",
+    dockerfile_location: "/path/to/Dockerfile",
+    dockerfile_context: ".",
+
+    // Publish Artifact (Docker Image)
+    artifact_publish_check: false,
+    artifact_destination_type: "ecr", 
+    jenkins_aws_credentials_id: "aws-credentials-id",
+    docker_image_name: "go-app",
+    ecr_repo_name: "go-app-repo",
+    ecr_region: "us-east-1",
+    account_id: "your-account-id",
+
+    // Notification
+    notification_enabled: false,
+    notification_channel: "slack-channel",
+    webhook_url_creds_id: "slack-webhook-creds-id",
+    
+    slack_notification_enabled: true,
+    slack_channel: "jenkinss"
+  ])
+}
