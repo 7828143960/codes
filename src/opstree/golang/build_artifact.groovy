@@ -24,9 +24,8 @@ def build_artifact(Map step_params) {
     repo_dir = parser.fetch_git_repo_name('repo_url':"${repo_url}")
 
     dir("${WORKSPACE}/${repo_dir}") {
-        def build_command = "go mod tidy && go build -o ${step_params.output_binary}"
-
-        sh """ docker run --rm -v ~/.go:/go -v /var/lib/jenkins/workspace/eks/OT-Microservices/employee:/app -w /app golang:1.19 sh -c "${build_command}" """
+        // Directly pass the command to the Docker container
+        sh """ docker run --rm -v ~/.go:/go -v ${WORKSPACE}/${repo_dir}:/app -w /app golang:1.19 sh -c "go mod tidy && go build -o ${step_params.output_binary}" """
         logger.logger('msg':'Build successful', 'level':'INFO')
     }
 }
