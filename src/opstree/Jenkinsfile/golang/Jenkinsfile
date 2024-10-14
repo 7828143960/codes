@@ -6,14 +6,14 @@ node {
   cipipeline.call([
 
     // WORKSPACE MANAGEMENT
-    clean_workspace: true,
+    clean_workspace: false,
     ignore_clean_workspace_failure: false,
     delete_dirs: false,
-    clean_when_build_aborted: true, 
-    clean_when_build_failed: true,
-    clean_when_not_built: true,
-    clean_when_build_succeed: true,
-    clean_when_build_unstable: true,
+    clean_when_build_aborted: false, 
+    clean_when_build_failed: false,
+    clean_when_not_built: false,
+    clean_when_build_succeed: false,
+    clean_when_build_unstable: false,
 
     // VCS MANAGEMENT 
     repo_https_url: "https://github.com/opstree/OT-Microservices.git", // Replace with your Go repository URL
