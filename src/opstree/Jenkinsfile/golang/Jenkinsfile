@@ -71,7 +71,7 @@ node {
     notification_channel: "slack-channel",
     webhook_url_creds_id: "slack-webhook-creds-id",
     
-    slack_notification_enabled: true,
+    slack_notification_enabled: false,
     slack_channel: "jenkinss"
   ])
 }
