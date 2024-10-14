@@ -22,7 +22,7 @@ def build_artifact(Map step_params) {
 
     // Fetch the repository name using the parser and build the full path
     repo_dir = parser.fetch_git_repo_name('repo_url':"${repo_url}")
-    def full_source_path = "${env.WORKSPACE}/${source_code_path}/${repo_dir}"
+    def full_source_path = "${env.WORKSPACE}/${repo_dir}/${source_code_path}"
 
     // Print debug information for verification
     logger.logger('msg':"Full source path: ${full_source_path}", 'level':'DEBUG')
