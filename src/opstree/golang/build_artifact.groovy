@@ -23,10 +23,13 @@ def build_artifact(Map step_params) {
 
     repo_dir = parser.fetch_git_repo_name('repo_url':"${repo_url}")
 
-    dir("${WORKSPACE}/${repo_dir}") {
+    // Construct the path dynamically using the workspace and source_code_path
+    def workspace_dir = "${env.WORKSPACE}/${source_code_path}"
+
+    dir("${workspace_dir}/${repo_dir}") {
         def build_command = "go mod tidy && go build -o ${step_params.output_binary}"
 
-        sh """ docker run --rm -v ~/.go:/go -v /var/lib/jenkins/workspace/eks/OT-Microservices/employee:/app -w /app golang:1.19 sh -c "${build_command}" """
+        sh """ docker run --rm -v ~/.go:/go -v ${workspace_dir}:/app -w /app golang:1.19 sh -c "${build_command}" """
         logger.logger('msg':'Build successful', 'level':'INFO')
     }
 }
