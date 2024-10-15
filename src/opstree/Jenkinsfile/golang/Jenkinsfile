@@ -12,7 +12,7 @@ node {
     clean_when_build_aborted: true, 
     clean_when_build_failed: true,
     clean_when_not_built: true,
-    clean_when_build_succeed: true,
+    clean_when_build_succeed: false,
     clean_when_build_unstable: true,
 
     // VCS MANAGEMENT 
