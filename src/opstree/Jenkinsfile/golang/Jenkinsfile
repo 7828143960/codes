@@ -12,8 +12,8 @@ node {
     clean_when_build_aborted: true, 
     clean_when_build_failed: true,
     clean_when_not_built: true,
-    clean_when_build_succeed: false,
-    clean_when_build_unstable: true,
+    clean_when_build_succeed: true,
+    clean_when_build_unstable: false,
 
     // VCS MANAGEMENT 
     repo_https_url: "https://github.com/opstree/OT-Microservices.git", // Replace with your Go repository URL
