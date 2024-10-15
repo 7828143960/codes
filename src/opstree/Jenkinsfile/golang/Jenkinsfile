@@ -10,8 +10,8 @@ node {
     ignore_clean_workspace_failure: false,
     delete_dirs: false,
     clean_when_build_aborted: true, 
-    clean_when_build_failed: false,
-    clean_when_not_built: true,
+    clean_when_build_failed: true,
+    clean_when_not_built: false,
     clean_when_build_succeed: true,
     clean_when_build_unstable: true,
 
